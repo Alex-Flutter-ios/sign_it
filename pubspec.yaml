@@ -1,0 +1,56 @@
+name: scaner_test_task
+description: "A new Flutter project."
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.6.1
+
+dependencies:
+  bloc: ^9.0.0
+  cupertino_icons: ^1.0.8
+  dio: ^5.8.0+1
+  equatable: ^2.0.7
+  file_picker: ^8.3.3
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.0.0
+  in_app_review: ^2.0.10
+  lottie: ^3.3.1
+  path_provider: ^2.1.5
+  pdf: ^3.11.2
+  printing: ^5.14.0
+  purchases_flutter: ^8.4.5
+  shared_preferences: ^2.5.2
+
+dev_dependencies:
+  flutter_lints: ^5.0.0
+  flutter_test:
+    sdk: flutter
+
+dependency_overrides:
+#   package_info_plus: ^4.0.1
+  # revenuecat: ^0.0.2
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/document/
+    - assets/documents_list/
+    - assets/onboarding/
+    - assets/animations/
+    - assets/subscription/
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
