@@ -23,17 +23,19 @@ class OnboardingPage extends StatelessWidget {
             title,
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
+                  fontSize: 32,
                   color: Color(0xFFFFFFFF),
                 ),
-            textAlign: TextAlign.center,
+            // textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
           Text(
             description,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontSize: 21,
                   color: Color(0xFFFFFFFF),
                 ),
-            textAlign: TextAlign.center,
+            // textAlign: TextAlign.center,
           ),
           const Spacer(),
           Image.asset(image),

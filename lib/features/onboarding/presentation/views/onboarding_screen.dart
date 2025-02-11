@@ -75,13 +75,13 @@ class OnboardingContentState extends State<OnboardingContent> {
           2,
           (index) => Container(
             margin: const EdgeInsets.symmetric(horizontal: 4),
-            width: 8,
-            height: 8,
+            width: 14,
+            height: 14,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: _currentPage == index
                   ? Theme.of(context).primaryColor
-                  : Colors.grey,
+                  : Color(0xFFF5F5F5),
             ),
           ),
         ),
@@ -132,8 +132,6 @@ class OnboardingContentState extends State<OnboardingContent> {
                           child: PageView(
                             controller: _controller,
                             onPageChanged: _onPageChanged,
-                            // onPageChanged: (index) =>
-                            //     setState(() => _currentPage = index),
                             children: [
                               OnboardingPage(
                                 image: 'assets/onboarding/onboarding1.png',
@@ -147,19 +145,29 @@ class OnboardingContentState extends State<OnboardingContent> {
                                 description:
                                     'Design and store yourpersonalized signature for quick access',
                               ),
-                              // if (widget.firstTime) _buildTutorialPage(),
-                              // _buildRatingPage(),
                             ],
                           ),
                         ),
-                        // _buildNavigationButtons(),
-                        // _buildPageIndicator(),
                       ],
                     ),
                   ),
                 ),
-                _buildNavigationButtons(),
-                _buildPageIndicator(),
+                const SizedBox(height: 16.0),
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: Color(0xFFFFFFFF),
+                    borderRadius: BorderRadius.circular(28.0),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildNavigationButtons(),
+                      _buildPageIndicator(),
+                      const SizedBox(height: 16.0),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scaner_test_task/core/utils/routers/routes.dart';
 import 'package:scaner_test_task/features/onboarding/data/onboarding_repository.dart';
-// import 'package:scaner_test_task/features/documents_list/views/documents_screen.dart';
 import 'package:scaner_test_task/features/onboarding/presentation/views/onboarding_screen.dart';
 import 'package:scaner_test_task/features/splash/presentation/views/splash_screen.dart';
+import 'package:scaner_test_task/features/subscription/data/mock_subscription_service_impl.dart';
+import 'package:scaner_test_task/features/subscription/data/subscription_service.dart';
+import 'package:scaner_test_task/features/subscription/presentation/cubit/subscription_cubit.dart';
+import 'package:scaner_test_task/features/subscription/presentation/views/paywall_a_screen.dart';
+import 'package:scaner_test_task/features/subscription/presentation/views/paywall_b_screen.dart';
+import 'package:scaner_test_task/features/subscription/presentation/views/subscription_router_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'features/onboarding/presentation/cubit/onboarding_cubit.dart';
@@ -12,6 +17,8 @@ import 'features/onboarding/presentation/cubit/onboarding_cubit.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
+  final subscriptionService = MockSubscriptionService();
+  await subscriptionService.initialize();
 
   runApp(
     MultiRepositoryProvider(
@@ -19,11 +26,23 @@ void main() async {
         RepositoryProvider(
           create: (context) => OnboardingRepository(prefs),
         ),
+        RepositoryProvider<SubscriptionService>(
+          create: (_) => subscriptionService,
+        ),
       ],
-      child: BlocProvider<OnboardingCubit>(
-        create: (context) => OnboardingCubit(
-          context.read<OnboardingRepository>(),
-        )..checkOnboardingStatus(),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<OnboardingCubit>(
+            create: (context) => OnboardingCubit(
+              context.read<OnboardingRepository>(),
+            )..checkOnboardingStatus(),
+          ),
+          BlocProvider<SubscriptionCubit>(
+            create: (context) => SubscriptionCubit(
+              context.read<SubscriptionService>(),
+            ),
+          ),
+        ],
         child: const MyApp(),
       ),
     ),
@@ -35,8 +54,8 @@ class MyApp extends StatelessWidget {
 
   ThemeData _buildTheme() => ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
-          primary: const Color(0xFF2196F3),
+          seedColor: const Color(0xFF5436FF),
+          primary: const Color(0xFF364EFF),
         ),
         useMaterial3: true,
         appBarTheme: const AppBarTheme(
@@ -50,18 +69,17 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       navigatorKey: GlobalKey<NavigatorState>(),
-      // key: GlobalKey(),
       debugShowCheckedModeBanner: false,
       theme: _buildTheme(),
       initialRoute: Routes.splash.name,
       routes: {
         Routes.splash.name: (context) => const SplashScreen(),
         Routes.onboarding.name: (context) => OnboardingScreen(),
+        Routes.subscription.name: (context) => const SubscriptionRouterScreen(),
+        Routes.paywallA.name: (context) => const PaywallAScreen(),
+        Routes.paywallB.name: (context) => const PaywallBScreen(),
         // Routes.documents.name: (context) => DocumentsScreen(),
         //  Routes.document.name: (context) => const DocumentScreen(),
-        // Routes.paywallA.name: (context) => const PaywallAScreen(),
-        // Routes.paywallB.name: (context) => const PaywallBScreen(),
-        // Добавьте остальные роуты
       },
       // home: BlocListener<OnboardingCubit, OnboardingState>(
       //   listener: (context, state) {
