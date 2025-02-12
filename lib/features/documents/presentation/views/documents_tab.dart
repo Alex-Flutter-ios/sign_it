@@ -5,6 +5,17 @@ class DocumentsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text('DocumentsTab');
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Documents'),
+      ),
+      body: Column(
+        children: [
+          Center(
+            child: Text('Documents Tab'),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -5,6 +5,10 @@ class ToolsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text('ToolsTab');
+    return Scaffold(
+      body: Center(
+        child: Text('Tools Tab'),
+      ),
+    );
   }
 }

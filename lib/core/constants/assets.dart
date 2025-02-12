@@ -19,6 +19,9 @@ enum AppImageAssets implements ImageAssets {
   unlimitedSignature('assets/images/unlimited_signature.png'),
 
   /// Documents list specific
+  scan('assets/images/scan.png'),
+  gallery('assets/images/gallery.png'),
+  files('assets/images/files.png'),
 
   /// Document specific
   ;

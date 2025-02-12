@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scaner_test_task/core/constants/assets.dart';
 
 import 'documents_tab.dart';
 import 'toos_tab.dart';
@@ -13,6 +14,7 @@ class DocumentsScreen extends StatefulWidget {
 class _DocumentsScreenState extends State<DocumentsScreen> {
   int _selectedIndex = 0;
   late PageController _pageController;
+  OverlayEntry? _overlayEntry;
 
   @override
   void initState() {
@@ -32,42 +34,97 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   }
 
   void _showAddOptions(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return Container(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: Icon(Icons.camera_alt),
-                title: Text('Scan'),
-                onTap: () {
+    if (_overlayEntry != null) {
+      _overlayEntry?.remove();
+      _overlayEntry = null;
+      return;
+    }
+
+    final overlay = Overlay.of(context);
+    final renderBox = context.findRenderObject() as RenderBox;
+    final size = renderBox.size;
+
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        bottom: size.height * 0.15,
+        left: (size.width - 100) / 2, // Center the menu
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            width: 200,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(28.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 5,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+            child: Column(
+              // mainAxisSize: MainAxisSize.min,
+
+              children: [
+                const SizedBox(height: 12.0),
+                _buildMenuItem('Scan', AppImageAssets.scan.asset, () {
+                  _overlayEntry?.remove();
+                  _overlayEntry = null;
                   // Handle scan
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.photo),
-                title: Text('Gallery'),
-                onTap: () {
+                }),
+                const SizedBox(height: 12.0),
+                _buildMenuItem('Gallery', AppImageAssets.gallery.asset, () {
+                  _overlayEntry?.remove();
+                  _overlayEntry = null;
                   // Handle gallery
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.folder),
-                title: Text('Files'),
-                onTap: () {
+                }),
+                const SizedBox(height: 12.0),
+                _buildMenuItem('Files', AppImageAssets.files.asset, () {
+                  _overlayEntry?.remove();
+                  _overlayEntry = null;
                   // Handle files
-                  Navigator.pop(context);
-                },
-              ),
-            ],
+                }),
+                const SizedBox(height: 12.0),
+              ],
+            ),
           ),
-        );
-      },
+        ),
+      ),
+    );
+
+    overlay.insert(_overlayEntry!);
+  }
+
+  Widget _buildMenuItem(String label, String icon, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: Color(0xFFF5F5F5),
+            borderRadius: BorderRadius.circular(32.0),
+          ),
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+            child: Row(
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: Colors.black.withOpacity(0.25),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Spacer(),
+                Image.asset(icon, width: 24, height: 24),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -93,7 +150,6 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
             bottom: MediaQuery.sizeOf(context).height * 0.05,
           ),
           child: Row(
-            // alignment: Alignment.center,
             children: [
               const Spacer(),
               DecoratedBox(
