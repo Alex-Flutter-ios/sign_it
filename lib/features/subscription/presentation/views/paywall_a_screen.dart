@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scaner_test_task/core/constants/assets.dart';
+import 'package:scaner_test_task/features/subscription/presentation/views/widgets/total_widget.dart';
 import '../cubit/subscription_cubit.dart';
 import '../../../../core/utils/routers/routes.dart';
 import 'widgets/bottom_button.dart';
 import 'widgets/gradient_button.dart';
 
 class PaywallAScreen extends StatefulWidget {
-  const PaywallAScreen({super.key});
+  const PaywallAScreen({super.key, this.paywallType});
+  final String? paywallType;
 
   @override
   State<PaywallAScreen> createState() => _PaywallAScreenState();
@@ -15,6 +17,7 @@ class PaywallAScreen extends StatefulWidget {
 
 class _PaywallAScreenState extends State<PaywallAScreen> {
   bool _isTrialSelected = true; // по умолчанию выбран trial
+  double totalPrice = 0.00;
 
   @override
   Widget build(BuildContext context) {
@@ -233,6 +236,7 @@ class _PaywallAScreenState extends State<PaywallAScreen> {
                                   onTap: () {
                                     setState(() {
                                       _isTrialSelected = true;
+                                      totalPrice = 0.00;
                                     });
                                   },
                                 ),
@@ -246,10 +250,17 @@ class _PaywallAScreenState extends State<PaywallAScreen> {
                                   onTap: () {
                                     setState(() {
                                       _isTrialSelected = false;
+                                      totalPrice = 39.99;
                                     });
                                   },
                                 ),
                                 const SizedBox(height: 16),
+                                widget.paywallType == 'b'
+                                    ? TotalWidget(
+                                        title: 'Total',
+                                        price: '$totalPrice',
+                                      )
+                                    : const SizedBox.shrink(),
 
                                 GradientButton(
                                   onPressed: () {
@@ -263,7 +274,7 @@ class _PaywallAScreenState extends State<PaywallAScreen> {
                                   },
                                   title: _isTrialSelected
                                       ? 'Try For Free'
-                                      : 'Subscribe Now',
+                                      : 'Continue',
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,

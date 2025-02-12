@@ -8,7 +8,7 @@ class MockSubscriptionService implements SubscriptionService {
   Future<void> initialize() async {
     await Future.delayed(const Duration(seconds: 1));
     _premium = false;
-    _secondPayout = false;
+    _secondPayout = true;
   }
 
   @override

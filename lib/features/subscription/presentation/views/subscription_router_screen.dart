@@ -63,7 +63,11 @@ class _SubscriptionRouterScreenState extends State<SubscriptionRouterScreen> {
         body: SizedBox.shrink(),
       );
     }
-
-    return paywallType == 'b' ? const PaywallBScreen() : const PaywallAScreen();
+    return PaywallAScreen(paywallType: paywallType ?? '');
+    // return paywallType == 'b'
+    //     ? const PaywallBScreen()
+    //     : PaywallAScreen(
+    //         paywallType: paywallType ?? '',
+    //       );
   }
 }
