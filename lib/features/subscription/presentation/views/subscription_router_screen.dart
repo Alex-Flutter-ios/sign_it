@@ -50,7 +50,7 @@ class _SubscriptionRouterScreenState extends State<SubscriptionRouterScreen> {
   Widget build(BuildContext context) {
     if (isPremium == null && paywallType == null) {
       return const Scaffold(
-        body: SizedBox.shrink(), //Center(child: CircularProgressIndicator()),
+        body: SizedBox.shrink(),
       );
     }
 
