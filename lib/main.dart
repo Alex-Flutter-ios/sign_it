@@ -78,18 +78,7 @@ class MyApp extends StatelessWidget {
         Routes.subscription.name: (context) => const SubscriptionRouterScreen(),
         Routes.paywallA.name: (context) => const PaywallAScreen(),
         Routes.paywallB.name: (context) => const PaywallBScreen(),
-        // Routes.documents.name: (context) => DocumentsScreen(),
-        //  Routes.document.name: (context) => const DocumentScreen(),
       },
-      // home: BlocListener<OnboardingCubit, OnboardingState>(
-      //   listener: (context, state) {
-      //     if (state is OnboardingCompleted) {
-      //       // Переход на следующий экран после завершения онбординга
-      //       Navigator.pushReplacementNamed(context, Routes.subscription.name);
-      //     }
-      //   },
-      //   child: const SplashScreen(),
-      // ),
     );
   }
 }
