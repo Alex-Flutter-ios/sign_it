@@ -17,3 +17,8 @@ final class SubscriptionError extends SubscriptionState {
   SubscriptionError(this.message);
   final String message;
 }
+
+final class SubscriptionRestoreFailed extends SubscriptionState {
+  SubscriptionRestoreFailed(this.message);
+  final String message;
+}

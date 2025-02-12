@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scaner_test_task/core/utils/routers/routes.dart';
+import 'package:scaner_test_task/features/documents/presentation/views/documents_screen.dart';
 import 'package:scaner_test_task/features/onboarding/data/onboarding_repository.dart';
 import 'package:scaner_test_task/features/onboarding/presentation/views/onboarding_screen.dart';
 import 'package:scaner_test_task/features/splash/presentation/views/splash_screen.dart';
@@ -8,7 +9,7 @@ import 'package:scaner_test_task/features/subscription/data/mock_subscription_se
 import 'package:scaner_test_task/features/subscription/data/subscription_service.dart';
 import 'package:scaner_test_task/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:scaner_test_task/features/subscription/presentation/views/paywall_a_screen.dart';
-import 'package:scaner_test_task/features/subscription/presentation/views/paywall_b_screen.dart';
+// import 'package:scaner_test_task/features/subscription/presentation/views/paywall_b_screen.dart';
 import 'package:scaner_test_task/features/subscription/presentation/views/subscription_router_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -77,7 +78,7 @@ class MyApp extends StatelessWidget {
         Routes.onboarding.name: (context) => OnboardingScreen(),
         Routes.subscription.name: (context) => const SubscriptionRouterScreen(),
         Routes.paywallA.name: (context) => const PaywallAScreen(),
-        Routes.paywallB.name: (context) => const PaywallBScreen(),
+        Routes.document.name: (context) => const DocumentsScreen(),
       },
     );
   }

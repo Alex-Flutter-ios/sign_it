@@ -36,7 +36,11 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
     emit(SubscriptionLoading());
     try {
       final success = await _service.restorePurchases();
-      emit(SubscriptionLoaded(isPremium: success));
+      if (success) {
+        emit(SubscriptionLoaded(isPremium: true));
+      } else {
+        emit(SubscriptionRestoreFailed('No active subscription found'));
+      }
     } catch (e) {
       emit(SubscriptionError(e.toString()));
     }
