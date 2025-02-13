@@ -1,5 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:scaner_test_task/core/utils/routers/routes.dart';
 import 'package:scaner_test_task/features/documents/presentation/views/documents_screen.dart';
 import 'package:scaner_test_task/features/onboarding/data/onboarding_repository.dart';
@@ -9,15 +11,32 @@ import 'package:scaner_test_task/features/subscription/data/mock_subscription_se
 import 'package:scaner_test_task/features/subscription/data/subscription_service.dart';
 import 'package:scaner_test_task/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:scaner_test_task/features/subscription/presentation/views/paywall_a_screen.dart';
-// import 'package:scaner_test_task/features/subscription/presentation/views/paywall_b_screen.dart';
 import 'package:scaner_test_task/features/subscription/presentation/views/subscription_router_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'core/adapters/document_adapter.dart';
+import 'features/documents/data/datasource/local_datasource.dart';
+import 'features/documents/data/datasource/remote_datasource.dart';
+import 'features/documents/data/document_repository_impl.dart';
+import 'features/documents/data/models/document.dart';
+import 'features/documents/presentation/cubit/documents_cubit.dart';
 import 'features/onboarding/presentation/cubit/onboarding_cubit.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  //date formatting initialization
+  await initializeDateFormatting();
+
+  //hive initialization
+  await Hive.initFlutter();
+  Hive.registerAdapter(DocumentAdapter());
+  final box = await Hive.openBox<Document>('documents');
+
+  //shared preferences initialization
   final prefs = await SharedPreferences.getInstance();
+
+  //subscription initialization
   final subscriptionService = MockSubscriptionService();
   await subscriptionService.initialize();
 
@@ -30,6 +49,18 @@ void main() async {
         RepositoryProvider<SubscriptionService>(
           create: (_) => subscriptionService,
         ),
+        RepositoryProvider(
+          create: (_) => DocumentLocalDataSource(box),
+        ),
+        RepositoryProvider(
+          create: (_) => DocumentRemoteDataSource(Dio()),
+        ),
+        RepositoryProvider(
+          create: (context) => DocumentRepository(
+            localDataSource: context.read<DocumentLocalDataSource>(),
+            remoteDataSource: context.read<DocumentRemoteDataSource>(),
+          ),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -41,6 +72,11 @@ void main() async {
           BlocProvider<SubscriptionCubit>(
             create: (context) => SubscriptionCubit(
               context.read<SubscriptionService>(),
+            ),
+          ),
+          BlocProvider<DocumentsCubit>(
+            create: (context) => DocumentsCubit(
+              context.read<DocumentRepository>(),
             ),
           ),
         ],
@@ -60,10 +96,10 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
         appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
           elevation: 0,
+          backgroundColor:  Color(0xFFF2F4FF),
         ),
+        scaffoldBackgroundColor: const Color(0xFFF2F4FF),
       );
 
   @override

@@ -22,6 +22,7 @@ enum AppImageAssets implements ImageAssets {
   scan('assets/images/scan.png'),
   gallery('assets/images/gallery.png'),
   files('assets/images/files.png'),
+  nothing('assets/images/nothing.png'),
 
   /// Document specific
   ;
