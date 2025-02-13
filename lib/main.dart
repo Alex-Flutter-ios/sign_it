@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:scanbot_sdk/scanbot_sdk.dart';
 import 'package:scaner_test_task/core/utils/routers/routes.dart';
 import 'package:scaner_test_task/features/documents/presentation/views/documents_screen.dart';
 import 'package:scaner_test_task/features/onboarding/data/onboarding_repository.dart';
@@ -39,6 +40,27 @@ void main() async {
   //subscription initialization
   final subscriptionService = MockSubscriptionService();
   await subscriptionService.initialize();
+
+  //scanbot sdk initialization
+  final licenseKey = "bORqy5cafPI7fknl/ShLtRFyu7v+bm" +
+      "cC7dEqs06AHT/RNJbB3WlUmsolxPR0" +
+      "Qy0hHivuPsqzLJQL0ZFrFeH23w6dRL" +
+      "y/S9e6UvAIlB9dOWe/Ei55xKSl+Cf2" +
+      "59pMVKZ+o+z8EAR04XtH29WISzydzv" +
+      "EHYpT/Oe4VdCX02Jm9qul0COJ87oRd" +
+      "fRxYZ/IXNMMvk4K2tKfjDkWsA6Go6T" +
+      "bZ4BxUJ/zrLBts4+A4hBsTbOTdGlI1" +
+      "OAB1pSaRvw8fOWt/hV8FGUyblxi0D/" +
+      "uFDyz4jHaGFwRqPQVgRL6jr5QdbAlB" +
+      "JJ1vQQS8Flw1xtmBaxQpMgDQh1/llB" +
+      "onv44mIZ6DNw==\nU2NhbmJvdFNESw" +
+      "pjb20uZXhhbXBsZS5zY2FuZXJfdGVz" +
+      "dF90YXNrCjE3NDAwOTU5OTkKODM4OD" +
+      "YwNwoxOQ==\n"; //7 days trial license key
+  ScanbotSdk.initScanbotSdk(ScanbotSdkConfig(
+    loggingEnabled: true,
+    licenseKey: licenseKey, // see the license key notes below!
+  ));
 
   runApp(
     MultiRepositoryProvider(

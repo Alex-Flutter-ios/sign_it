@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:scanbot_sdk/scanbot_sdk.dart';
 
 import '../../data/document_repository_impl.dart';
 import '../../data/models/document.dart';
@@ -15,23 +16,25 @@ class DocumentsCubit extends Cubit<DocumentsState> {
   DocumentsCubit(this.repository) : super(DocumentsInitial());
 
   final DocumentRepository repository;
-  List<Document> _allDocuments = [];
-  List<Document> _filteredDocuments = [];
+  List<Document> allDocuments = [];
+  List<Document> filteredDocuments = [];
 
   void searchDocuments(String query) {
     if (state is! DocumentsLoaded) return;
 
-    _filteredDocuments = _allDocuments
+    filteredDocuments = allDocuments
         .where((doc) => doc.name.toLowerCase().contains(query.toLowerCase()))
         .toList();
 
-    emit(DocumentsLoaded(_allDocuments, filteredDocuments: _filteredDocuments));
+    emit(DocumentsLoaded(allDocuments, filteredDocuments: filteredDocuments));
   }
 
   Future<void> loadDocuments() async {
-    emit(DocumentsLoading());
     try {
+      emit(DocumentsLoading());
       final documents = await repository.getDocuments();
+      allDocuments.clear();
+      allDocuments = List.from(documents);
       emit(DocumentsLoaded(documents));
     } catch (e) {
       emit(DocumentsError(e.toString()));
@@ -40,6 +43,7 @@ class DocumentsCubit extends Cubit<DocumentsState> {
 
   Future<void> scanDocument() async {
     try {
+      emit(DocumentProcessing());
       final file = await _scanDocument();
       await _processFile(file, DocumentSource.scan);
     } catch (e) {
@@ -66,15 +70,35 @@ class DocumentsCubit extends Cubit<DocumentsState> {
   }
 
   Future<File> _scanDocument() async {
-    // Реализация сканирования с помощью библиотеки (например: scanbot_sdk)
-    throw UnimplementedError();
+    try {
+      final config = DocumentScannerConfiguration(
+        multiPageEnabled: false,
+        cancelButtonTitle: "Cancel",
+      );
+      final result = await ScanbotSdkUi.startDocumentScanner(config);
+
+      if (result.operationResult != OperationResult.SUCCESS ||
+          result.pages.isEmpty) {
+        throw Exception("Error scanning document");
+      }
+
+      final filePath =
+          result.pages.first.documentPreviewImageFileUri?.path ?? '';
+      return File(filePath);
+    } catch (e) {
+      print("Scan error: $e");
+      throw Exception("Error scanning document");
+    }
   }
 
   Future<File> _pickImage() async {
-    final picker = ImagePicker();
-    final result = await picker.pickImage(source: ImageSource.gallery);
-    if (result == null) throw Exception('No image selected');
-    return File(result.path);
+    try {
+      final result = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (result == null) throw Exception('No image selected');
+      return File(result.path);
+    } catch (e) {
+      throw Exception('No image selected');
+    }
   }
 
   Future<File> _pickFile() async {
@@ -87,18 +111,20 @@ class DocumentsCubit extends Cubit<DocumentsState> {
   }
 
   Future<void> _processFile(File file, DocumentSource source) async {
-    emit(DocumentProcessing(file.path));
+    emit(DocumentProcessing());
 
     try {
-      if (_needsConversion(file)) {
+      final needsConversion = _needsConversion(file);
+
+      if (needsConversion) {
         final convertedFile = await _convertFile(file);
-        await repository.saveDocument(
+        final conversioResult = await repository.saveDocument(
           file: convertedFile,
           source: source,
           originalName: file.path.split('/').last,
         );
       } else {
-        await repository.saveDocument(
+        final saveConversioResult = await repository.saveDocument(
           file: file,
           source: source,
           originalName: file.path.split('/').last,
@@ -117,23 +143,28 @@ class DocumentsCubit extends Cubit<DocumentsState> {
   }
 
   Future<File> _convertFile(File file) async {
-    final dio = Dio();
-    final formData = FormData.fromMap({
-      'kit': await MultipartFile.fromFile(file.path),
-    });
+    try {
+      final dio = Dio();
+      final formData = FormData.fromMap({
+        'kit': await MultipartFile.fromFile(file.path),
+      });
 
-    final response = await dio.post(
-      'https://pdfconverterkit.click/converter_kit',
-      data: formData,
-    );
+      final response = await dio.post(
+        'https://pdfconverterkit.click/converter_kit',
+        data: formData,
+        options: Options(responseType: ResponseType.bytes),
+      );
 
-    if (response.statusCode != 200) throw Exception('Conversion failed');
+      if (response.statusCode != 200) throw Exception('Conversion failed');
 
-    final tempDir = await getTemporaryDirectory();
-    final outputFile =
-        File('${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.pdf');
-    await outputFile.writeAsBytes(response.data);
+      final tempDir = await getTemporaryDirectory();
+      final outputFile =
+          File('${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.pdf');
+      await outputFile.writeAsBytes(response.data);
 
-    return outputFile;
+      return outputFile;
+    } catch (e) {
+      throw Exception('Conversion failed: $e');
+    }
   }
 }

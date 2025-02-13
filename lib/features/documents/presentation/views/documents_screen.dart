@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scaner_test_task/core/constants/assets.dart';
 
+import '../cubit/documents_cubit.dart';
 import 'documents_tab.dart';
 import 'toos_tab.dart';
 
@@ -14,12 +16,21 @@ class DocumentsScreen extends StatefulWidget {
 class _DocumentsScreenState extends State<DocumentsScreen> {
   int _selectedIndex = 0;
   late PageController _pageController;
+  late DocumentsCubit cubit;
+
   OverlayEntry? _overlayEntry;
 
   @override
   void initState() {
     super.initState();
+    cubit = BlocProvider.of<DocumentsCubit>(context);
     _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   void _onItemTapped(int index) {
@@ -64,26 +75,27 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
               ],
             ),
             child: Column(
-              // mainAxisSize: MainAxisSize.min,
-
               children: [
+                // Handle scan
                 const SizedBox(height: 12.0),
                 _buildMenuItem('Scan', AppImageAssets.scan.asset, () {
                   _overlayEntry?.remove();
                   _overlayEntry = null;
-                  // Handle scan
+                  cubit.scanDocument();
                 }),
+                // Handle gallery
                 const SizedBox(height: 12.0),
                 _buildMenuItem('Gallery', AppImageAssets.gallery.asset, () {
                   _overlayEntry?.remove();
                   _overlayEntry = null;
-                  // Handle gallery
+                  cubit.pickFromGallery();
                 }),
+                // Handle files
                 const SizedBox(height: 12.0),
                 _buildMenuItem('Files', AppImageAssets.files.asset, () {
                   _overlayEntry?.remove();
                   _overlayEntry = null;
-                  // Handle files
+                  cubit.pickFromFiles();
                 }),
                 const SizedBox(height: 12.0),
               ],

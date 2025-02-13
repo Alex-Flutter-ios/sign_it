@@ -45,5 +45,10 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+	<key>NSCameraUsageDescription</key>
+	<string>Camera access is required to scan your documents using camera.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Camera access is required to scan your documents using camera.</string>
 </dict>
 </plist>

@@ -20,9 +20,7 @@ class DocumentsLoaded extends DocumentsState {
 }
 
 class DocumentProcessing extends DocumentsState {
-  final String fileName;
-
-  const DocumentProcessing(this.fileName);
+  const DocumentProcessing();
 }
 
 class DocumentsError extends DocumentsState {

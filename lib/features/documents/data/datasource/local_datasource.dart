@@ -15,7 +15,7 @@ class DocumentLocalDataSource {
   }
 
   Future<Document> saveDocument(Document document) async {
-    await _box.put(document.id, document);
+    final result = await _box.put(document.id, document);
     return document;
   }
 

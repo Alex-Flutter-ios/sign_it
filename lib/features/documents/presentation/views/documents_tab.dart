@@ -8,33 +8,42 @@ import 'package:intl/intl.dart';
 import '../../../../core/constants/assets.dart';
 import '../../data/models/document.dart';
 
-class DocumentsTab extends StatelessWidget {
+class DocumentsTab extends StatefulWidget {
   const DocumentsTab({super.key});
 
-  Widget _buildContent(DocumentsState state) {
-    if (state is DocumentsLoading) {
-      return Center(child: CircularProgressIndicator());
-    }
+  @override
+  State<DocumentsTab> createState() => _DocumentsTabState();
+}
 
-    if (state is DocumentsLoaded) {
-      return state.documents.isEmpty
+class _DocumentsTabState extends State<DocumentsTab> {
+  late DocumentsCubit cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    cubit = BlocProvider.of<DocumentsCubit>(context);
+    cubit.loadDocuments();
+  }
+
+  Widget _buildContent(BuildContext context, DocumentsState state) {
+    return switch (state) {
+      DocumentsInitial() => const SizedBox.shrink(),
+      DocumentConvertionProgress() =>
+        Center(child: CircularProgressIndicator()),
+      DocumentsLoading() => Center(child: CircularProgressIndicator()),
+      DocumentProcessing() => Center(child: CircularProgressIndicator()),
+      DocumentsLoaded() => state.documents.isEmpty
           ? _buildEmptyState()
-          : ListView.separated(
+          : ListView.builder(
+              shrinkWrap: true,
               padding: EdgeInsets.symmetric(horizontal: 16),
-              itemCount: state.filteredDocuments.length,
-              separatorBuilder: (_, __) => SizedBox(height: 12),
-              itemBuilder: (context, index) => DocumentCard(
-                document: state.filteredDocuments[index],
-              ),
-            );
-    }
-
-    if (state is DocumentsError) {
-      return Center(child: Text('Error: ${state.message}'));
-    }
-
-    return _buildEmptyState();
-    // return SizedBox.shrink();
+              itemCount: state.documents.length,
+              itemBuilder: (context, index) {
+                return DocumentCard(document: state.documents[index]);
+              },
+            ),
+      DocumentsError() => Center(child: Text('Error: ${state.message}')),
+    };
   }
 
   Widget _buildEmptyState() {
@@ -49,28 +58,20 @@ class DocumentsTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<DocumentsCubit, DocumentsState>(
       builder: (context, state) {
-        return Column(
-          children: [
-            // Logo
-            LogoWidget(
-              signFontSize: 30.0,
-              itFontSize: 30.0,
-            ),
-
-            // Search
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: SearchWidget(
-                onChanged: (query) =>
-                    context.read<DocumentsCubit>().searchDocuments(query),
+        return RefreshIndicator.adaptive(
+          onRefresh: () => cubit.loadDocuments(),
+          child: Column(
+            children: [
+              LogoWidget(signFontSize: 30.0, itFontSize: 30.0),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SearchWidget(
+                  onChanged: (query) => cubit.searchDocuments(query),
+                ),
               ),
-            ),
-
-            // Document List
-            Expanded(
-              child: _buildContent(state),
-            ),
-          ],
+              _buildContent(context, state),
+            ],
+          ),
         );
       },
     );
@@ -179,7 +180,7 @@ class DocumentCard extends StatelessWidget {
           DateFormat('EEE, MMM d, y').format(document.createdAt),
           style: TextStyle(color: Colors.grey[600]),
         ),
-        trailing: Icon(Icons.more_vert),
+        trailing: Icon(Icons.arrow_forward_ios, color: Color(0xFF364EFF)),
         onTap: () => _showDocumentOptions(context),
       ),
     );

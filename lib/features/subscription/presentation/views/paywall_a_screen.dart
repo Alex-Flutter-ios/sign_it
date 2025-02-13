@@ -50,7 +50,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
       backgroundColor: const Color.fromARGB(255, 241, 241, 241),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           child: Column(
             children: [
               Container(
@@ -172,8 +172,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
-              // ---- Блок планов ----
+              const SizedBox(height: 8),
               BlocConsumer<SubscriptionCubit, SubscriptionState>(
                 listener: (context, state) {
                   if (state is SubscriptionLoaded && state.isPremium) {
@@ -301,8 +300,6 @@ class _PaywallScreenState extends State<PaywallScreen> {
     );
   }
 }
-
-// ---- Вспомогательные виджеты ----
 
 class _PlanRow extends StatelessWidget {
   const _PlanRow({

@@ -14,16 +14,26 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  Timer? _timer;
+
   @override
   void initState() {
     super.initState();
   }
 
   @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocListener<OnboardingCubit, OnboardingState>(
       listener: (context, state) {
-        Timer(const Duration(seconds: 2), () {
+        _timer = Timer(const Duration(seconds: 2), () {
+          if (!mounted) return; // Проверка, что виджет ещё смонтирован
+
           context.read<OnboardingCubit>().checkOnboardingStatus();
           if (state is OnboardingShow) {
             Navigator.pushReplacementNamed(context, Routes.onboarding.name);
