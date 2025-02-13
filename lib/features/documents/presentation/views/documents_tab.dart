@@ -1,6 +1,7 @@
 // features/documents_list/presentation/views/documents_tab.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:scaner_test_task/core/widgets/logo_widget.dart';
 import 'package:scaner_test_task/features/documents/presentation/cubit/documents_cubit.dart';
 import 'package:intl/intl.dart';
 
@@ -50,21 +51,16 @@ class DocumentsTab extends StatelessWidget {
       builder: (context, state) {
         return Column(
           children: [
-            // Search Bar
+            // Logo
+            LogoWidget(
+              signFontSize: 30.0,
+              itFontSize: 30.0,
+            ),
+
+            // Search
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Search...',
-                  prefixIcon: Icon(Icons.search),
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: EdgeInsets.symmetric(vertical: 12),
-                ),
+              child: SearchWidget(
                 onChanged: (query) =>
                     context.read<DocumentsCubit>().searchDocuments(query),
               ),
@@ -77,6 +73,52 @@ class DocumentsTab extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+}
+
+class SearchWidget extends StatelessWidget {
+  const SearchWidget({super.key, required this.onChanged});
+  final void Function(String) onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Color(0xFFFFFFFF),
+        borderRadius: BorderRadius.circular(34.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 5,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: TextField(
+        decoration: InputDecoration(
+          hintText: 'Search...',
+          hintStyle: TextStyle(
+            color: Colors.black.withOpacity(0.25),
+            fontSize: 17,
+            fontWeight: FontWeight.w400,
+          ),
+          prefixIcon: Icon(
+            Icons.search,
+            weight: 1,
+            color: Colors.black.withOpacity(0.25),
+          ),
+          filled: true,
+          fillColor: Color(0xFFFFFFFF),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(34.0),
+            borderSide: BorderSide.none,
+          ),
+          contentPadding:
+              EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+        ),
+        onChanged: onChanged,
+      ),
     );
   }
 }

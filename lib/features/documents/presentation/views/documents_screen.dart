@@ -131,7 +131,6 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F4FF),
       appBar: AppBar(),
       body: PageView(
         physics: NeverScrollableScrollPhysics(),

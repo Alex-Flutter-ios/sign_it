@@ -97,7 +97,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         appBarTheme: const AppBarTheme(
           elevation: 0,
-          backgroundColor:  Color(0xFFF2F4FF),
+          backgroundColor: Color(0xFFF2F4FF),
         ),
         scaffoldBackgroundColor: const Color(0xFFF2F4FF),
       );
@@ -113,7 +113,7 @@ class MyApp extends StatelessWidget {
         Routes.splash.name: (context) => const SplashScreen(),
         Routes.onboarding.name: (context) => OnboardingScreen(),
         Routes.subscription.name: (context) => const SubscriptionRouterScreen(),
-        Routes.paywallA.name: (context) => const PaywallAScreen(),
+        Routes.paywallA.name: (context) => const PaywallScreen(),
         Routes.document.name: (context) => const DocumentsScreen(),
       },
     );

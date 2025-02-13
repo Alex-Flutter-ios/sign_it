@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scaner_test_task/core/constants/assets.dart';
+import 'package:scaner_test_task/core/widgets/logo_widget.dart';
 import 'package:scaner_test_task/features/subscription/presentation/views/widgets/total_widget.dart';
 import '../../../documents/presentation/views/documents_screen.dart';
 import '../cubit/subscription_cubit.dart';
 import 'widgets/bottom_button.dart';
 import 'widgets/gradient_button.dart';
 
-class PaywallAScreen extends StatefulWidget {
-  const PaywallAScreen({super.key, this.paywallType});
+class PaywallScreen extends StatefulWidget {
+  const PaywallScreen({super.key, this.paywallType});
   final String? paywallType;
 
   @override
-  State<PaywallAScreen> createState() => _PaywallAScreenState();
+  State<PaywallScreen> createState() => _PaywallScreenState();
 }
 
-class _PaywallAScreenState extends State<PaywallAScreen> {
+class _PaywallScreenState extends State<PaywallScreen> {
   bool _isTrialSelected = true; // по умолчанию выбран trial
   double totalPrice = 0.00;
 
@@ -79,31 +80,7 @@ class _PaywallAScreenState extends State<PaywallAScreen> {
                                   horizontal: 16.0,
                                   vertical: 12.0,
                                 ),
-                                child: RichText(
-                                  text: TextSpan(
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color.fromARGB(255, 0, 0, 0),
-                                    ),
-                                    children: [
-                                      const TextSpan(
-                                        text: 'Sign ',
-                                        style: TextStyle(
-                                          fontSize: 24,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: 'it',
-                                        style: const TextStyle(
-                                          fontFamily: 'DancingScrip',
-                                          fontSize: 24,
-                                          color: Color(0xFF364EFF),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                child: LogoWidget(),
                               ),
                             ),
                           ],
