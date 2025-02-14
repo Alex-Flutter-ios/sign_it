@@ -36,6 +36,11 @@ class DocumentInfoScreen extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
+          const SizedBox(width: 24.0),
+          InkWell(
+            child: const Icon(Icons.arrow_back, color: Color(0xFF364EFF)),
+            onTap: () => Navigator.of(context).pop(),
+          ),
           DecoratedBox(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -50,6 +55,7 @@ class DocumentInfoScreen extends StatelessWidget {
                     AppImageAssets.share.asset,
                     () => cubit.shareDocument(doc),
                   ),
+                  const SizedBox(width: 8.0),
                   _buildActionButton(
                     AppImageAssets.print.asset,
                     () => cubit.printDocument(doc),
@@ -63,6 +69,7 @@ class DocumentInfoScreen extends StatelessWidget {
               ),
             ),
           ),
+          const SizedBox(width: 24.0),
         ],
       ),
       body: Center(
