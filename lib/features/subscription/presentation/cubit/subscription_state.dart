@@ -1,4 +1,3 @@
-// features/subscription/presentation/cubit/subscription_state.dart
 part of 'subscription_cubit.dart';
 
 @immutable

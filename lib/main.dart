@@ -59,10 +59,9 @@ void main() async {
       "pjb20uZXhhbXBsZS5zY2FuZXJfdGVz" +
       "dF90YXNrCjE3NDAwOTU5OTkKODM4OD" +
       "YwNwoxOQ==\n"; //7 days trial license key
-  ScanbotSdk.initScanbotSdk(ScanbotSdkConfig(
-    loggingEnabled: true,
-    licenseKey: licenseKey, // see the license key notes below!
-  ));
+  ScanbotSdk.initScanbotSdk(
+    ScanbotSdkConfig(loggingEnabled: true, licenseKey: licenseKey),
+  );
 
   runApp(
     MultiRepositoryProvider(

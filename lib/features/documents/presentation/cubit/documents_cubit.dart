@@ -47,10 +47,12 @@ class DocumentsCubit extends Cubit<DocumentsState> {
 
   Future<void> scanDocument() async {
     try {
-      emit(DocumentProcessing());
+      // emit(DocumentProcessing());
       final file = await _scanDocument();
-      final originalName = p.basename(file.path);
-      await _processFile(file, DocumentSource.scan, originalName);
+      if (file != null) {
+        final originalName = p.basename(file.path);
+        await _processFile(file, DocumentSource.scan, originalName);
+      }
     } catch (e) {
       emit(DocumentsError(e.toString()));
     }
@@ -58,9 +60,12 @@ class DocumentsCubit extends Cubit<DocumentsState> {
 
   Future<void> pickFromGallery() async {
     try {
+      // emit(DocumentProcessing());
       final file = await _pickImage();
-      final originalName = p.basename(file.path);
-      await _processFile(file, DocumentSource.gallery, originalName);
+      if (file != null) {
+        final originalName = p.basename(file.path);
+        await _processFile(file, DocumentSource.gallery, originalName);
+      }
     } catch (e) {
       emit(DocumentsError(e.toString()));
     }
@@ -68,15 +73,18 @@ class DocumentsCubit extends Cubit<DocumentsState> {
 
   Future<void> pickFromFiles() async {
     try {
+      // emit(DocumentProcessing());
       final file = await _pickFile();
-      final originalName = p.basename(file.path);
-      await _processFile(file, DocumentSource.files, originalName);
+      if (file != null) {
+        final originalName = p.basename(file.path);
+        await _processFile(file, DocumentSource.files, originalName);
+      }
     } catch (e) {
       emit(DocumentsError(e.toString()));
     }
   }
 
-  Future<File> _scanDocument() async {
+  Future<File?> _scanDocument() async {
     try {
       final config = DocumentScannerConfiguration(
         multiPageEnabled: false,
@@ -84,37 +92,49 @@ class DocumentsCubit extends Cubit<DocumentsState> {
       );
       final result = await ScanbotSdkUi.startDocumentScanner(config);
 
-      if (result.operationResult != OperationResult.SUCCESS ||
-          result.pages.isEmpty) {
-        throw Exception("Error scanning document");
+      // if (result.operationResult != OperationResult.SUCCESS ||
+      //     result.operationResult != OperationResult.CANCELED ||
+      //     result.pages.isEmpty) {
+      //   // throw Exception("Error scanning document");
+      // }
+      if (result.operationResult == OperationResult.SUCCESS) {
+        final filePath =
+            result.pages.first.documentPreviewImageFileUri?.path ?? '';
+        return File(filePath);
       }
-
-      final filePath =
-          result.pages.first.documentPreviewImageFileUri?.path ?? '';
-      return File(filePath);
+      // final filePath =
+      //     result.pages.first.documentPreviewImageFileUri?.path ?? '';
+      // return File(filePath);
     } catch (e) {
       print("Scan error: $e");
-      throw Exception("Error scanning document");
     }
+    return null;
   }
 
-  Future<File> _pickImage() async {
+  Future<File?> _pickImage() async {
     try {
       final result = await ImagePicker().pickImage(source: ImageSource.gallery);
       if (result == null) throw Exception('No image selected');
       return File(result.path);
     } catch (e) {
-      throw Exception('No image selected');
+      debugPrint('No image selected');
     }
+    return null;
   }
 
-  Future<File> _pickFile() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['pdf', 'doc', 'docx', 'xls', 'xlsx'],
-    );
-    if (result == null) throw Exception('No file selected');
-    return File(result.files.single.path!);
+  Future<File?> _pickFile() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'doc', 'docx', 'xls', 'xlsx'],
+      );
+      if (result != null) {
+        return File(result.files.single.path!);
+      }
+    } catch (e) {
+      debugPrint('No file selected');
+    }
+    return null;
   }
 
   Future<void> _processFile(
@@ -235,77 +255,4 @@ class DocumentsCubit extends Cubit<DocumentsState> {
 
     return outputFile;
   }
-
-  // Future<File> _convertFile(File file) async {
-  //   try {
-  //     if (!await file.exists()) {
-  //       throw Exception('Source file does not exist');
-  //     }
-
-  //     final fileSize = await file.length();
-  //     if (fileSize == 0) {
-  //       throw Exception('Source file is empty');
-  //     }
-
-  //     // 2. Set up Dio
-  //     final dio = Dio(BaseOptions(
-  //       connectTimeout: const Duration(seconds: 15),
-  //       receiveTimeout: const Duration(seconds: 15),
-  //     ));
-
-  //     // 3. Create FormData with 'kit' field
-  //     final formData = FormData.fromMap({
-  //       'kit': await MultipartFile.fromFile(
-  //         file.path,
-  //         filename: 'document.${file.path.split('.').last}',
-  //       ),
-  //     });
-
-  //     // 4. Send POST request
-  //     final response = await dio.post<String>(
-  //       'https://pdfconverterkit.click/converter_kit',
-  //       data: formData,
-  //       options: Options(
-  //         responseType: ResponseType.plain,
-  //         validateStatus: (status) => status == 200,
-  //       ),
-  //     );
-
-  //     // 5. Check response status
-  //     if (response.statusCode != 200) {
-  //       throw Exception('Server responded with error: ${response.statusCode}');
-  //     }
-
-  //     // 6. Parse the URL from the response
-  //     final pdfUrl = response.data?.replaceAll('"', '');
-  //     if (pdfUrl == null || !pdfUrl.startsWith('http')) {
-  //       throw Exception('Invalid URL received: $pdfUrl');
-  //     }
-
-  //     // 7. Download the PDF file
-  //     final pdfResponse = await dio.get<List<int>>(
-  //       pdfUrl,
-  //       options: Options(
-  //         responseType: ResponseType.bytes,
-  //         validateStatus: (status) => status == 200,
-  //       ),
-  //     );
-
-  //     final bytes = pdfResponse.data;
-  //     if (bytes == null || bytes.isEmpty) {
-  //       throw Exception('Failed to download PDF file');
-  //     }
-
-  //     // 8. Save the PDF file
-  //     final tempDir = await getTemporaryDirectory();
-  //     final outputFile =
-  //         File('${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.pdf');
-  //     await outputFile.writeAsBytes(bytes);
-
-  //     return outputFile;
-  //   } catch (e) {
-  //     debugPrint('Conversion Error: ${e.toString()}');
-  //     throw Exception('Failed to convert file: ${e.toString()}');
-  //   }
-  // }
 }

@@ -25,13 +25,12 @@ class _DocumentsTabState extends State<DocumentsTab> {
   }
 
   Widget _buildContent(BuildContext context, DocumentsState state) {
-    return switch (state) {
-      DocumentsInitial() => const SizedBox.shrink(),
-      DocumentConvertionProgress() =>
-        Center(child: CircularProgressIndicator()),
-      DocumentsLoading() => Center(child: CircularProgressIndicator()),
-      DocumentProcessing() => Center(child: CircularProgressIndicator()),
-      DocumentsLoaded() => state.documents.isEmpty
+    if (state is DocumentsInitial) return const SizedBox.shrink();
+    if (state is DocumentsLoading) {
+      return Center(child: CircularProgressIndicator());
+    }
+    if (state is DocumentsLoaded) {
+      return state.documents.isEmpty
           ? _buildEmptyState()
           : ListView.builder(
               shrinkWrap: true,
@@ -40,9 +39,31 @@ class _DocumentsTabState extends State<DocumentsTab> {
               itemBuilder: (context, index) {
                 return DocumentCard(document: state.documents[index]);
               },
-            ),
-      DocumentsError() => Center(child: Text('Error: ${state.message}')),
-    };
+            );
+    }
+    if (state is DocumentsError) {
+      return Center(child: Text('Error: ${state.message}'));
+    }
+    return const SizedBox.shrink();
+    // return switch (state) {
+    //   DocumentsInitial() => const SizedBox.shrink(),
+    //   DocumentConvertionProgress() =>
+    //     Center(child: CircularProgressIndicator()),
+    //   DocumentsLoading() => Center(child: CircularProgressIndicator()),
+    //   DocumentProcessing() =>
+    //     const SizedBox.shrink(), // Center(child: CircularProgressIndicator()),
+    //   DocumentsLoaded() => state.documents.isEmpty
+    //       ? _buildEmptyState()
+    //       : ListView.builder(
+    //           shrinkWrap: true,
+    //           padding: EdgeInsets.symmetric(horizontal: 16),
+    //           itemCount: state.documents.length,
+    //           itemBuilder: (context, index) {
+    //             return DocumentCard(document: state.documents[index]);
+    //           },
+    //         ),
+    //   DocumentsError() => Center(child: Text('Error: ${state.message}')),
+    // };
   }
 
   Widget _buildEmptyState() {
