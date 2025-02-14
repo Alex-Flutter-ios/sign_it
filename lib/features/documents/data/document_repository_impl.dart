@@ -34,6 +34,10 @@ class DocumentRepository {
     return localDataSource.saveDocument(document);
   }
 
+  Future<void> deleteDocument(String documentId) async {
+    await localDataSource.deleteDocument(documentId);
+  }
+
   String _generateDocumentName(DocumentSource source, String? originalName) {
     if (originalName != null && originalName.isNotEmpty) {
       return originalName;

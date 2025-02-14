@@ -1,40 +1,68 @@
-HELP.md
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+# Dart & Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+pubspec.lock
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-.mvn
-.jpb
-mvnw.cmd
-mvnw
+# Build outputs
+build/
+outputs.json
+outputs/
 
+# iOS
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/ServiceDefinitions.json
+ios/Runner.xcworkspace
+ios/Pods/
+ios/Runner/GeneratedPluginRegistrant.*
+*.xcworkspace
+*.xcuserstate
+*.xcscmblueprint
 
-### IntelliJ IDEA ###
-.idea
-*.iws
+# Android
+.android/
+gradle/
+app/*.iml
+android/.gradle/
+android/app/*.iml
+android/local.properties
+android/app/build/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# IntelliJ / Android Studio
 *.iml
 *.ipr
+*.iws
+.idea/
+*.idea/
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+# Mac
+.DS_Store
 
-### VS Code ###
-.vscode/
+# Others
+*.log
+*.swp
+*.lock
+*.lock.json
 
-db/
+# If you have a Windows build (Desktop)
+windows/runner/Debug/
+windows/runner/Release/
+windows/runner/Profiling/
+
+# If you have a Linux build (Desktop)
+linux/Makefile
+linux/build/
+linux/ephemeral_artifacts/
+linux/Flutter/ephemeral/
+
+# If you have a macOS build (Desktop)
+macos/Flutter/ephemeral/
+macos/Runner.xcworkspace
+macos/Pods/
+macos/Runner/GeneratedPluginRegistrant.*

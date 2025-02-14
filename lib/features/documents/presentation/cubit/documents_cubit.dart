@@ -6,7 +6,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:printing/printing.dart';
 import 'package:scanbot_sdk/scanbot_sdk.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../data/document_repository_impl.dart';
 import '../../data/models/document.dart';
 
@@ -255,5 +257,45 @@ class DocumentsCubit extends Cubit<DocumentsState> {
     await outputFile.writeAsBytes(bytes);
 
     return outputFile;
+  }
+
+  Future<void> shareDocument(Document doc) async {
+    try {
+      final file = File(doc.path);
+      if (!file.existsSync()) {
+        throw Exception("File didn't found: ${doc.path}");
+      }
+
+      Share.shareXFiles([XFile(doc.path)]);
+    } catch (e) {
+      emit(DocumentsError('Sharing error: $e'));
+    }
+  }
+
+  Future<void> printDocument(Document doc) async {
+    try {
+      final file = File(doc.path);
+      if (!file.existsSync()) {
+        throw Exception("File didn't found: ${doc.path}");
+      }
+
+      final bytes = await file.readAsBytes();
+
+      await Printing.layoutPdf(
+        onLayout: (format) async => bytes,
+      );
+    } catch (e) {
+      emit(DocumentsError('Printing error: $e'));
+    }
+  }
+
+  Future<void> deleteDocument(String documentId) async {
+    emit(DocumentProcessing());
+    try {
+      await repository.deleteDocument(documentId);
+      await loadDocuments();
+    } catch (e) {
+      emit(DocumentsError(e.toString()));
+    }
   }
 }

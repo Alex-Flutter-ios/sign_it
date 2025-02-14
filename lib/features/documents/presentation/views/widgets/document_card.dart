@@ -30,7 +30,11 @@ class DocumentCard extends StatelessWidget {
         ],
       ),
       child: InkWell(
-        onTap: () => Navigator.pushNamed(context, Routes.documentInfo.name),
+        onTap: () => Navigator.pushNamed(
+          context,
+          Routes.documentInfo.name,
+          arguments: document,
+        ),
         child: Row(
           children: [
             Container(
