@@ -40,13 +40,5 @@ class DocumentRepository {
     }
 
     return 'Imported document';
-    // switch (source) {
-    //   case DocumentSource.scan:
-    //     return 'Scan document';
-    //   case DocumentSource.gallery:
-    //     return 'Gallery document';
-    //   case DocumentSource.files:
-    //     return originalName ?? 'Imported document';
-    // }
   }
 }

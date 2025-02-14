@@ -117,46 +117,6 @@ class DocumentsCubit extends Cubit<DocumentsState> {
     return File(result.files.single.path!);
   }
 
-  // Future<void> _processFile(
-  //   File file,
-  //   DocumentSource source,
-  //   String? originalName,
-  // ) async {
-  //   emit(DocumentProcessing());
-  //   try {
-  //     // Extract file extension from the original name.
-  //     // This applies to files from any source (scanner, gallery, files).
-  //     final extension = p.extension(originalName ?? '').toLowerCase();
-
-  //     // If the format is not PDF, convert it using the specified converter.
-  //     if (extension != '.pdf') {
-  //       final convertedFile = await _convertFile(file);
-
-  //       // Use the name without extension (or a default) and append .pdf.
-  //       final baseName =
-  //           p.basenameWithoutExtension(originalName ?? 'Converted');
-  //       final finalName = '$baseName.pdf';
-
-  //       await repository.saveDocument(
-  //         file: convertedFile,
-  //         source: source,
-  //         originalName: finalName,
-  //       );
-  //     } else {
-  //       // Otherwise, if already PDF, save as is.
-  //       await repository.saveDocument(
-  //         file: file,
-  //         source: source,
-  //         originalName: originalName,
-  //       );
-  //     }
-
-  //     await loadDocuments();
-  //   } catch (e) {
-  //     emit(DocumentsError(e.toString()));
-  //   }
-  // }
-
   Future<void> _processFile(
     File file,
     DocumentSource source,
@@ -181,7 +141,7 @@ class DocumentsCubit extends Cubit<DocumentsState> {
         final saveConversioResult = await repository.saveDocument(
           file: file,
           source: source,
-          originalName: finalName, //file.path.split('/').last,
+          originalName: finalName,
         );
       }
 
@@ -194,105 +154,158 @@ class DocumentsCubit extends Cubit<DocumentsState> {
   bool _needsConversion(File file) {
     final mimeType = lookupMimeType(file.path);
     return mimeType != 'application/pdf';
-    // final extension = file.path.split('.').last.toLowerCase();
-    // return extension != 'pdf';
   }
 
   Future<File> _convertFile(File file) async {
     try {
-      if (!await file.exists()) {
-        throw Exception('Source file does not exist');
-      }
-
-      final fileSize = await file.length();
-      if (fileSize == 0) {
-        throw Exception('Source file is empty');
-      }
-
-      // 2. Set up Dio
-      final dio = Dio(BaseOptions(
-        connectTimeout: const Duration(seconds: 15),
-        receiveTimeout: const Duration(seconds: 15),
-      ));
-
-      // 3. Create FormData with 'kit' field
-      final formData = FormData.fromMap({
-        'kit': await MultipartFile.fromFile(
-          file.path,
-          filename: 'document.${file.path.split('.').last}',
-        ),
-      });
-
-      // 4. Send POST request
-      final response = await dio.post<String>(
-        'https://pdfconverterkit.click/converter_kit',
-        data: formData,
-        options: Options(
-          responseType: ResponseType.plain,
-          validateStatus: (status) => status == 200,
-        ),
-      );
-
-      // 5. Check response status
-      if (response.statusCode != 200) {
-        throw Exception('Server responded with error: ${response.statusCode}');
-      }
-
-      // 6. Parse the URL from the response
-      final pdfUrl = response.data?.replaceAll('"', '');
-      if (pdfUrl == null || !pdfUrl.startsWith('http')) {
-        throw Exception('Invalid URL received: $pdfUrl');
-      }
-
-      // 7. Download the PDF file
-      final pdfResponse = await dio.get<List<int>>(
-        pdfUrl,
-        options: Options(
-          responseType: ResponseType.bytes,
-          validateStatus: (status) => status == 200,
-        ),
-      );
-
-      final bytes = pdfResponse.data;
-      if (bytes == null || bytes.isEmpty) {
-        throw Exception('Failed to download PDF file');
-      }
-
-      // 8. Save the PDF file
-      final tempDir = await getTemporaryDirectory();
-      final outputFile =
-          File('${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.pdf');
-      await outputFile.writeAsBytes(bytes);
-
-      return outputFile;
+      await _validateFile(file);
+      final dio = _createDio();
+      final pdfUrl = await _uploadFileAndGetPdfUrl(dio, file);
+      final pdfFile = await _downloadPdf(dio, pdfUrl);
+      return pdfFile;
     } catch (e) {
       debugPrint('Conversion Error: ${e.toString()}');
       throw Exception('Failed to convert file: ${e.toString()}');
     }
   }
+
+  Future<void> _validateFile(File file) async {
+    if (!await file.exists()) {
+      throw Exception('Source file does not exist');
+    }
+    if (await file.length() == 0) {
+      throw Exception('Source file is empty');
+    }
+  }
+
+  Dio _createDio() {
+    return Dio(BaseOptions(
+      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 15),
+    ));
+  }
+
+  Future<String> _uploadFileAndGetPdfUrl(Dio dio, File file) async {
+    final formData = FormData.fromMap({
+      'kit': await MultipartFile.fromFile(
+        file.path,
+        filename: 'document.${file.path.split('.').last}',
+      ),
+    });
+
+    final response = await dio.post<String>(
+      'https://pdfconverterkit.click/converter_kit',
+      data: formData,
+      options: Options(
+        responseType: ResponseType.plain,
+        validateStatus: (status) => status == 200,
+      ),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Server responded with error: ${response.statusCode}');
+    }
+
+    final pdfUrl = response.data?.replaceAll('"', '');
+    if (pdfUrl == null || !pdfUrl.startsWith('http')) {
+      throw Exception('Invalid URL received: $pdfUrl');
+    }
+
+    return pdfUrl;
+  }
+
+  Future<File> _downloadPdf(Dio dio, String pdfUrl) async {
+    final pdfResponse = await dio.get<List<int>>(
+      pdfUrl,
+      options: Options(
+        responseType: ResponseType.bytes,
+        validateStatus: (status) => status == 200,
+      ),
+    );
+
+    final bytes = pdfResponse.data;
+    if (bytes == null || bytes.isEmpty) {
+      throw Exception('Failed to download PDF file');
+    }
+
+    final tempDir = await getTemporaryDirectory();
+    final outputFile =
+        File('${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.pdf');
+    await outputFile.writeAsBytes(bytes);
+
+    return outputFile;
+  }
+
   // Future<File> _convertFile(File file) async {
   //   try {
-  //     final dio = Dio();
+  //     if (!await file.exists()) {
+  //       throw Exception('Source file does not exist');
+  //     }
+
+  //     final fileSize = await file.length();
+  //     if (fileSize == 0) {
+  //       throw Exception('Source file is empty');
+  //     }
+
+  //     // 2. Set up Dio
+  //     final dio = Dio(BaseOptions(
+  //       connectTimeout: const Duration(seconds: 15),
+  //       receiveTimeout: const Duration(seconds: 15),
+  //     ));
+
+  //     // 3. Create FormData with 'kit' field
   //     final formData = FormData.fromMap({
-  //       'kit': await MultipartFile.fromFile(file.path),
+  //       'kit': await MultipartFile.fromFile(
+  //         file.path,
+  //         filename: 'document.${file.path.split('.').last}',
+  //       ),
   //     });
 
-  //     final response = await dio.post(
+  //     // 4. Send POST request
+  //     final response = await dio.post<String>(
   //       'https://pdfconverterkit.click/converter_kit',
   //       data: formData,
-  //       options: Options(responseType: ResponseType.bytes),
+  //       options: Options(
+  //         responseType: ResponseType.plain,
+  //         validateStatus: (status) => status == 200,
+  //       ),
   //     );
 
-  //     if (response.statusCode != 200) throw Exception('Conversion failed');
+  //     // 5. Check response status
+  //     if (response.statusCode != 200) {
+  //       throw Exception('Server responded with error: ${response.statusCode}');
+  //     }
 
+  //     // 6. Parse the URL from the response
+  //     final pdfUrl = response.data?.replaceAll('"', '');
+  //     if (pdfUrl == null || !pdfUrl.startsWith('http')) {
+  //       throw Exception('Invalid URL received: $pdfUrl');
+  //     }
+
+  //     // 7. Download the PDF file
+  //     final pdfResponse = await dio.get<List<int>>(
+  //       pdfUrl,
+  //       options: Options(
+  //         responseType: ResponseType.bytes,
+  //         validateStatus: (status) => status == 200,
+  //       ),
+  //     );
+
+  //     final bytes = pdfResponse.data;
+  //     if (bytes == null || bytes.isEmpty) {
+  //       throw Exception('Failed to download PDF file');
+  //     }
+
+  //     // 8. Save the PDF file
   //     final tempDir = await getTemporaryDirectory();
   //     final outputFile =
   //         File('${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.pdf');
-  //     await outputFile.writeAsBytes(response.data);
+  //     await outputFile.writeAsBytes(bytes);
 
   //     return outputFile;
   //   } catch (e) {
-  //     throw Exception('Conversion failed: $e');
+  //     debugPrint('Conversion Error: ${e.toString()}');
+  //     throw Exception('Failed to convert file: ${e.toString()}');
   //   }
   // }
 }
