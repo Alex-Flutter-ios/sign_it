@@ -36,11 +36,11 @@ class DocumentInfoScreen extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
-          const SizedBox(width: 24.0),
-          InkWell(
-            child: const Icon(Icons.arrow_back, color: Color(0xFF364EFF)),
-            onTap: () => Navigator.of(context).pop(),
-          ),
+          // const SizedBox(width: 24.0),
+          // InkWell(
+          //   child: const Icon(Icons.arrow_back, color: Color(0xFF364EFF)),
+          //   onTap: () => Navigator.of(context).pop(),
+          // ),
           DecoratedBox(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -72,9 +72,10 @@ class DocumentInfoScreen extends StatelessWidget {
           const SizedBox(width: 24.0),
         ],
       ),
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
+        child: SizedBox(
+          height: MediaQuery.sizeOf(context).height / 1.5,
           child: PDFView(
             filePath: doc.path,
             onError: (error) {
