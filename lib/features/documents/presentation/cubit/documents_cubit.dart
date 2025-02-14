@@ -102,9 +102,6 @@ class DocumentsCubit extends Cubit<DocumentsState> {
             result.pages.first.documentPreviewImageFileUri?.path ?? '';
         return File(filePath);
       }
-      // final filePath =
-      //     result.pages.first.documentPreviewImageFileUri?.path ?? '';
-      // return File(filePath);
     } catch (e) {
       print("Scan error: $e");
     }
@@ -151,14 +148,13 @@ class DocumentsCubit extends Cubit<DocumentsState> {
 
       if (needsConversion) {
         documentFile = await _convertFile(file);
-
-        final conversioResult = await repository.saveDocument(
+        await repository.saveDocument(
           file: documentFile,
           source: source,
           originalName: documentFile.path.split('/').last,
         );
       } else {
-        final saveConversioResult = await repository.saveDocument(
+        await repository.saveDocument(
           file: file,
           source: source,
           originalName: finalName,
