@@ -656,6 +656,18 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "share_plus",
+      "rootUri": "file:///Users/alex/.pub-cache/hosted/pub.dev/share_plus-10.1.4",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "share_plus_platform_interface",
+      "rootUri": "file:///Users/alex/.pub-cache/hosted/pub.dev/share_plus_platform_interface-5.0.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
+    },
+    {
       "name": "shared_preferences",
       "rootUri": "file:///Users/alex/.pub-cache/hosted/pub.dev/shared_preferences-2.5.2",
       "packageUri": "lib/",
@@ -908,7 +920,7 @@
       "languageVersion": "3.6"
     }
   ],
-  "generated": "2025-02-14T14:01:54.107847Z",
+  "generated": "2025-02-14T17:20:26.984567Z",
   "generator": "pub",
   "generatorVersion": "3.6.2",
   "flutterRoot": "file:///Users/alex/Downloads/flutter",

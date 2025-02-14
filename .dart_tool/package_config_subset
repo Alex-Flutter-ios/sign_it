@@ -418,6 +418,14 @@ scanbot_sdk
 3.0
 file:///Users/alex/.pub-cache/hosted/pub.dev/scanbot_sdk-6.1.2/
 file:///Users/alex/.pub-cache/hosted/pub.dev/scanbot_sdk-6.1.2/lib/
+share_plus
+3.4
+file:///Users/alex/.pub-cache/hosted/pub.dev/share_plus-10.1.4/
+file:///Users/alex/.pub-cache/hosted/pub.dev/share_plus-10.1.4/lib/
+share_plus_platform_interface
+2.18
+file:///Users/alex/.pub-cache/hosted/pub.dev/share_plus_platform_interface-5.0.2/
+file:///Users/alex/.pub-cache/hosted/pub.dev/share_plus_platform_interface-5.0.2/lib/
 shared_preferences
 3.5
 file:///Users/alex/.pub-cache/hosted/pub.dev/shared_preferences-2.5.2/

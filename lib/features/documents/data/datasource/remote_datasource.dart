@@ -16,10 +16,7 @@ class DocumentRemoteDataSource {
     final response = await _dio.post(
       'https://pdfconverterkit.click/converter_kit',
       data: formData,
-      onSendProgress: (sent, total) {
-        final progress = sent / total;
-        // Отправляем прогресс в Cubit
-      },
+      onSendProgress: (sent, total) {},
     );
 
     final tempDir = await getTemporaryDirectory();

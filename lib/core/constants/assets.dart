@@ -24,7 +24,10 @@ enum AppImageAssets implements ImageAssets {
   files('assets/images/files.png'),
   nothing('assets/images/nothing.png'),
 
-  /// Document specific
+  /// Document info specific
+  share('assets/images/share.png'),
+  print('assets/images/print.png'),
+  delete('assets/images/delete.png'),
   ;
 
   @override
