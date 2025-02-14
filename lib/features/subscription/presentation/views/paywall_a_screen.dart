@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scaner_test_task/core/constants/assets.dart';
+import 'package:scaner_test_task/core/constants/routes.dart';
 import 'package:scaner_test_task/core/widgets/logo_widget.dart';
 import 'package:scaner_test_task/features/subscription/presentation/views/widgets/total_widget.dart';
-import '../../../documents/presentation/views/documents_screen.dart';
 import '../cubit/subscription_cubit.dart';
 import 'widgets/bottom_button.dart';
+import 'widgets/feature_column.dart';
 import 'widgets/gradient_button.dart';
+import 'widgets/plan_row.dart';
 
 class PaywallScreen extends StatefulWidget {
   const PaywallScreen({super.key, this.paywallType});
@@ -17,16 +19,8 @@ class PaywallScreen extends StatefulWidget {
 }
 
 class _PaywallScreenState extends State<PaywallScreen> {
-  bool _isTrialSelected = true; // по умолчанию выбран trial
+  bool _isTrialSelected = true;
   double totalPrice = 0.00;
-
-  void _navigateToDocuments() {
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (_) => const DocumentsScreen()),
-      (route) => false,
-    );
-  }
 
   void _showErrorDialog(String message) {
     showDialog(
@@ -145,24 +139,22 @@ class _PaywallScreenState extends State<PaywallScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-
-                    // ---- Блок иконок/преимуществ (пример) ----
                     Row(
                       children: [
                         Expanded(
-                          child: _FeatureColumn(
+                          child: FeatureColumn(
                             icon: AppImageAssets.unlimitedSignature.asset,
                             label: 'Unlimited Signatures',
                           ),
                         ),
                         Expanded(
-                          child: _FeatureColumn(
+                          child: FeatureColumn(
                             icon: AppImageAssets.documentScanner.asset,
                             label: 'Document Scanner',
                           ),
                         ),
                         Expanded(
-                          child: _FeatureColumn(
+                          child: FeatureColumn(
                             icon: AppImageAssets.adFreeExperinece.asset,
                             label: 'Ad-Free Experience',
                           ),
@@ -176,8 +168,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
               BlocConsumer<SubscriptionCubit, SubscriptionState>(
                 listener: (context, state) {
                   if (state is SubscriptionLoaded && state.isPremium) {
-                    _navigateToDocuments();
-                    // Navigator.pushReplacementNamed(context, Routes.documents.name);
+                    Navigator.pushReplacementNamed(
+                        context, Routes.documents.name);
                   }
                   if (state is SubscriptionError) {
                     _showErrorDialog(state.message);
@@ -208,7 +200,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                                       CrossAxisAlignment.stretch,
                                   children: [
                                     // 3-Day Free Trial
-                                    _PlanRow(
+                                    PlanRow(
                                       title: '3-Day Free Trial',
                                       subtitle: 'then 4.99\$/week',
                                       price: '\$0.00',
@@ -222,7 +214,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                                     ),
                                     const SizedBox(height: 8),
                                     // Annual plan
-                                    _PlanRow(
+                                    PlanRow(
                                       title: 'Annual plan',
                                       subtitle: 'Enjoy unlimited access!',
                                       price: '\$39.99',
@@ -297,97 +289,6 @@ class _PaywallScreenState extends State<PaywallScreen> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _PlanRow extends StatelessWidget {
-  const _PlanRow({
-    required this.title,
-    required this.subtitle,
-    required this.price,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  final String title;
-  final String subtitle;
-  final String price;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        height: 60,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        decoration: BoxDecoration(
-          color: Color(0xFFF2F4FF),
-          borderRadius: BorderRadius.circular(14.0),
-          border: Border.all(
-            color: isSelected ? const Color(0xFF364EFF) : Color(0xFFF2F4FF),
-            width: isSelected ? 2 : 0,
-          ),
-        ),
-        child: Row(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.normal,
-                    color: const Color.fromARGB(255, 124, 124, 124),
-                  ),
-                ),
-              ],
-            ),
-            const Spacer(),
-            Text(
-              price,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _FeatureColumn extends StatelessWidget {
-  const _FeatureColumn({required this.icon, required this.label});
-
-  final String icon;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Image.asset(icon),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          textAlign: TextAlign.center,
-          style: const TextStyle(color: Colors.white),
-        ),
-      ],
     );
   }
 }

@@ -1,12 +1,11 @@
-// features/documents_list/presentation/views/documents_tab.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scaner_test_task/core/widgets/logo_widget.dart';
 import 'package:scaner_test_task/features/documents/presentation/cubit/documents_cubit.dart';
-import 'package:intl/intl.dart';
 
 import '../../../../core/constants/assets.dart';
-import '../../data/models/document.dart';
+
+import 'widgets/document_card.dart';
 
 class DocumentsTab extends StatefulWidget {
   const DocumentsTab({super.key});
@@ -119,69 +118,6 @@ class SearchWidget extends StatelessWidget {
               EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
         ),
         onChanged: onChanged,
-      ),
-    );
-  }
-}
-
-class DocumentCard extends StatelessWidget {
-  const DocumentCard({super.key, required this.document});
-  final Document document;
-
-  void _showDocumentOptions(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (_) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            leading: Icon(Icons.edit),
-            title: Text('Rename'),
-            onTap: () {/* Реализация переименования */},
-          ),
-          ListTile(
-            leading: Icon(Icons.share),
-            title: Text('Share'),
-            onTap: () {/* Реализация шаринга */},
-          ),
-          // ListTile(
-          //   leading: Icon(Icons.delete),
-          //   title: Text('Delete'),
-          //   onTap: () =>
-          //       context.read<DocumentsCubit>().deleteDocument(document.id),
-          // ),
-        ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 6,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: ListTile(
-        contentPadding: EdgeInsets.all(16),
-        leading: Icon(Icons.description, color: Color(0xFF364EFF)),
-        title: Text(
-          document.name,
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(
-          DateFormat('EEE, MMM d, y').format(document.createdAt),
-          style: TextStyle(color: Colors.grey[600]),
-        ),
-        trailing: Icon(Icons.arrow_forward_ios, color: Color(0xFF364EFF)),
-        onTap: () => _showDocumentOptions(context),
       ),
     );
   }

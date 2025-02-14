@@ -3,7 +3,7 @@ enum Routes {
   onboarding,
   subscription,
   documents,
-  document,
+  documentInfo,
   paywallA,
   // paywallB,
 }
@@ -19,8 +19,8 @@ extension RoutesExtension on Routes {
         return '/subscription';
       case Routes.documents:
         return '/documents';
-      case Routes.document:
-        return '/document';
+      case Routes.documentInfo:
+        return '/documentInfo';
       case Routes.paywallA:
         return '/paywallA';
       // case Routes.paywallB:

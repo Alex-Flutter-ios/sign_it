@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:scanbot_sdk/scanbot_sdk.dart';
 import 'package:scaner_test_task/core/utils/routers/routes.dart';
+import 'package:scaner_test_task/features/documents/presentation/views/document_info_screen.dart';
 import 'package:scaner_test_task/features/documents/presentation/views/documents_screen.dart';
 import 'package:scaner_test_task/features/onboarding/data/onboarding_repository.dart';
 import 'package:scaner_test_task/features/onboarding/presentation/views/onboarding_screen.dart';
@@ -33,6 +34,7 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(DocumentAdapter());
   final box = await Hive.openBox<Document>('documents');
+  box.clear();
 
   //shared preferences initialization
   final prefs = await SharedPreferences.getInstance();
@@ -136,7 +138,8 @@ class MyApp extends StatelessWidget {
         Routes.onboarding.name: (context) => OnboardingScreen(),
         Routes.subscription.name: (context) => const SubscriptionRouterScreen(),
         Routes.paywallA.name: (context) => const PaywallScreen(),
-        Routes.document.name: (context) => const DocumentsScreen(),
+        Routes.documents.name: (context) => const DocumentsScreen(),
+        Routes.documentInfo.name: (context) => const DocumentInfoScreen(),
       },
     );
   }

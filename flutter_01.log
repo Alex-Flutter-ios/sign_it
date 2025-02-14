@@ -1,0 +1,106 @@
+Flutter crash report.
+Please report a bug at https://github.com/flutter/flutter/issues.
+
+## command
+
+flutter run
+
+## exception
+
+PathNotFoundException: PathNotFoundException: Creation of temporary directory failed, path = '/var/folders/k9/vl0nh9h54bv96xdc1y99vqmh0000gn/T/flutter_tools.n4UjFV/core_devices.' (OS Error: No such file or directory, errno = 2)
+
+```
+#0      _Directory.createTempSync (dart:io/directory_impl.dart:170:7)
+#1      ForwardingDirectory.createTempSync (package:file/src/forwarding/forwarding_directory.dart:28:21)
+#2      ErrorHandlingDirectory.createTempSync.<anonymous closure> (package:flutter_tools/src/base/error_handling_io.dart:460:27)
+#3      _runSync (package:flutter_tools/src/base/error_handling_io.dart:600:14)
+#4      ErrorHandlingDirectory.createTempSync (package:flutter_tools/src/base/error_handling_io.dart:459:12)
+#5      IOSCoreDeviceControl._listCoreDevices (package:flutter_tools/src/ios/core_devices.dart:65:69)
+#6      IOSCoreDeviceControl.getCoreDevices (package:flutter_tools/src/ios/core_devices.dart:120:48)
+#7      XCDevice.getAvailableIOSDevices (package:flutter_tools/src/macos/xcdevice.dart:487:72)
+<asynchronous suspension>
+#8      PollingDeviceDiscovery._populateDevices (package:flutter_tools/src/device.dart:548:36)
+<asynchronous suspension>
+#9      Future.wait.<anonymous closure> (dart:async/future.dart:520:21)
+<asynchronous suspension>
+#10     DeviceManager.refreshExtendedWirelessDeviceDiscoverers (package:flutter_tools/src/device.dart:235:5)
+<asynchronous suspension>
+#11     TargetDevicesWithExtendedWirelessDeviceDiscovery._getRefreshedWirelessDevices.<anonymous closure> (package:flutter_tools/src/runner/target_devices.dart:412:7)
+<asynchronous suspension>
+#12     TargetDevicesWithExtendedWirelessDeviceDiscovery._selectFromDevicesAndCheckForWireless.<anonymous closure> (package:flutter_tools/src/runner/target_devices.dart:684:56)
+<asynchronous suspension>
+```
+
+## flutter doctor
+
+```
+[33m[!][39m Flutter (Channel stable, 3.27.2, on macOS 14.4.1 23E224 darwin-arm64, locale en-UA)
+    [32m•[39m Flutter version 3.27.2 on channel stable at /Users/alex/Downloads/flutter
+    [33m![39m Warning: `dart` on your path resolves to /opt/homebrew/Cellar/dart/2.19.1/libexec/bin/dart, which is not inside your current Flutter SDK
+      checkout at /Users/alex/Downloads/flutter. Consider adding /Users/alex/Downloads/flutter/bin to the front of your path.
+    [32m•[39m Upstream repository https://github.com/flutter/flutter.git
+    [32m•[39m Framework revision 68415ad1d9 (4 weeks ago), 2025-01-13 10:22:03 -0800
+    [32m•[39m Engine revision e672b006cb
+    [32m•[39m Dart version 3.6.1
+    [32m•[39m DevTools version 2.40.2
+    [32m•[39m If those were intentional, you can disregard the above warnings; however it is recommended to use "git" directly to perform update checks
+      and upgrades.
+
+[32m[✓][39m Android toolchain - develop for Android devices (Android SDK version 35.0.0)
+    [32m•[39m Android SDK at /Users/alex/Library/Android/sdk
+    [32m•[39m Platform android-35, build-tools 35.0.0
+    [32m•[39m Java binary at: /Applications/Android Studio.app/Contents/jbr/Contents/Home/bin/java
+    [32m•[39m Java version OpenJDK Runtime Environment (build 17.0.11+0-17.0.11b1207.24-11852314)
+    [32m•[39m All Android licenses accepted.
+
+[32m[✓][39m Xcode - develop for iOS and macOS (Xcode 15.4)
+    [32m•[39m Xcode at /Applications/Xcode.app/Contents/Developer
+    [32m•[39m Build 15F31d
+    [32m•[39m CocoaPods version 1.16.2
+
+[32m[✓][39m Chrome - develop for the web
+    [32m•[39m Chrome at /Applications/Google Chrome.app/Contents/MacOS/Google Chrome
+
+[32m[✓][39m Android Studio (version 2024.1)
+    [32m•[39m Android Studio at /Applications/Android Studio.app/Contents
+    [32m•[39m Flutter plugin can be installed from:
+      🔨 https://plugins.jetbrains.com/plugin/9212-flutter
+    [32m•[39m Dart plugin can be installed from:
+      🔨 https://plugins.jetbrains.com/plugin/6351-dart
+    [32m•[39m Java version OpenJDK Runtime Environment (build 17.0.11+0-17.0.11b1207.24-11852314)
+
+[32m[✓][39m VS Code (version 1.96.4)
+    [32m•[39m VS Code at /Applications/Visual Studio Code.app/Contents
+    [32m•[39m Flutter extension version 3.104.0
+
+[31m[☠][39m Connected device (the doctor check crashed)
+    [31m✗[39m Due to an error, the doctor check did not complete. If the error message below is not helpful, please let us know about this issue at
+      https://github.com/flutter/flutter/issues.
+    [31m✗[39m PathNotFoundException: Creation of temporary directory failed, path =
+      '/var/folders/k9/vl0nh9h54bv96xdc1y99vqmh0000gn/T/flutter_tools.n4UjFV/core_devices.' (OS Error: No such file or directory, errno = 2)
+    [32m•[39m #0      _Directory.createTempSync (dart:io/directory_impl.dart:170:7)
+      #1      ForwardingDirectory.createTempSync (package:file/src/forwarding/forwarding_directory.dart:28:21)
+      #2      ErrorHandlingDirectory.createTempSync.<anonymous closure> (package:flutter_tools/src/base/error_handling_io.dart:460:27)
+      #3      _runSync (package:flutter_tools/src/base/error_handling_io.dart:600:14)
+      #4      ErrorHandlingDirectory.createTempSync (package:flutter_tools/src/base/error_handling_io.dart:459:12)
+      #5      IOSCoreDeviceControl._listCoreDevices (package:flutter_tools/src/ios/core_devices.dart:65:69)
+      #6      IOSCoreDeviceControl.getCoreDevices (package:flutter_tools/src/ios/core_devices.dart:120:48)
+      #7      XCDevice.getAvailableIOSDevices (package:flutter_tools/src/macos/xcdevice.dart:487:72)
+      <asynchronous suspension>
+      #8      PollingDeviceDiscovery._populateDevices (package:flutter_tools/src/device.dart:548:36)
+      <asynchronous suspension>
+      #9      Future.wait.<anonymous closure> (dart:async/future.dart:520:21)
+      <asynchronous suspension>
+      #10     DeviceManager.refreshAllDevices (package:flutter_tools/src/device.dart:218:40)
+      <asynchronous suspension>
+      #11     DeviceValidator.validate (package:flutter_tools/src/doctor.dart:713:34)
+      <asynchronous suspension>
+      #12     Future.any.onValue (dart:async/future.dart:614:5)
+      <asynchronous suspension>
+
+
+[32m[✓][39m Network resources
+    [32m•[39m All expected network resources are available.
+
+[33m![39m Doctor found issues in 2 categories.
+```

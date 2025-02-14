@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -15,7 +16,7 @@ class DocumentLocalDataSource {
   }
 
   Future<Document> saveDocument(Document document) async {
-    final result = await _box.put(document.id, document);
+    await _box.put(document.id, document);
     return document;
   }
 
@@ -23,6 +24,11 @@ class DocumentLocalDataSource {
     final appDir = await getApplicationDocumentsDirectory();
     final newFile = File('${appDir.path}/$name');
     await newFile.writeAsBytes(await file.readAsBytes());
+    if (await newFile.exists()) {
+      debugPrint('File saved successfully: ${newFile.path}');
+    } else {
+      debugPrint('Failed to save file: ${newFile.path}');
+    }
     return newFile.path;
   }
 }

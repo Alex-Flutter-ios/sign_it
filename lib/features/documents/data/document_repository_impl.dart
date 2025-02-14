@@ -35,13 +35,18 @@ class DocumentRepository {
   }
 
   String _generateDocumentName(DocumentSource source, String? originalName) {
-    switch (source) {
-      case DocumentSource.scan:
-        return 'Scan document';
-      case DocumentSource.gallery:
-        return 'Gallery document';
-      case DocumentSource.files:
-        return originalName ?? 'Imported document';
+    if (originalName != null && originalName.isNotEmpty) {
+      return originalName;
     }
+
+    return 'Imported document';
+    // switch (source) {
+    //   case DocumentSource.scan:
+    //     return 'Scan document';
+    //   case DocumentSource.gallery:
+    //     return 'Gallery document';
+    //   case DocumentSource.files:
+    //     return originalName ?? 'Imported document';
+    // }
   }
 }
