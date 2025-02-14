@@ -13,10 +13,10 @@ class DocumentsLoading extends DocumentsState {
 }
 
 class DocumentsLoaded extends DocumentsState {
+  const DocumentsLoaded(this.documents, {this.filteredDocuments = const []});
+
   final List<Document> documents;
   final List<Document> filteredDocuments;
-
-  const DocumentsLoaded(this.documents, {this.filteredDocuments = const []});
 }
 
 class DocumentProcessing extends DocumentsState {
@@ -24,13 +24,13 @@ class DocumentProcessing extends DocumentsState {
 }
 
 class DocumentsError extends DocumentsState {
-  final String message;
-
   const DocumentsError(this.message);
+
+  final String message;
 }
 
 class DocumentConvertionProgress extends DocumentsState {
-  final double progress;
-
   const DocumentConvertionProgress(this.progress);
+
+  final double progress;
 }

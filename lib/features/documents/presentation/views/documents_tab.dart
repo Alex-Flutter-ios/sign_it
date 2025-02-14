@@ -30,40 +30,40 @@ class _DocumentsTabState extends State<DocumentsTab> {
       return Center(child: CircularProgressIndicator());
     }
     if (state is DocumentsLoaded) {
-      return state.documents.isEmpty
-          ? _buildEmptyState()
-          : ListView.builder(
-              shrinkWrap: true,
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              itemCount: state.documents.length,
-              itemBuilder: (context, index) {
-                return DocumentCard(document: state.documents[index]);
-              },
-            );
+      final docsToShow = state.filteredDocuments.isNotEmpty
+          ? state.filteredDocuments
+          : state.documents;
+
+      if (docsToShow.isEmpty) {
+        return _buildEmptyState();
+      }
+
+      return ListView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: docsToShow.length,
+        itemBuilder: (context, index) {
+          return DocumentCard(document: docsToShow[index]);
+        },
+      );
+
+      // return state.documents.isEmpty
+      //     ? _buildEmptyState()
+      //     : ListView.builder(
+      //         shrinkWrap: true,
+      //         physics: NeverScrollableScrollPhysics(),
+      //         padding: EdgeInsets.symmetric(horizontal: 16),
+      //         itemCount: state.documents.length,
+      //         itemBuilder: (context, index) {
+      //           return DocumentCard(document: state.documents[index]);
+      //         },
+      //       );
     }
     if (state is DocumentsError) {
       return Center(child: Text('Error: ${state.message}'));
     }
     return const SizedBox.shrink();
-    // return switch (state) {
-    //   DocumentsInitial() => const SizedBox.shrink(),
-    //   DocumentConvertionProgress() =>
-    //     Center(child: CircularProgressIndicator()),
-    //   DocumentsLoading() => Center(child: CircularProgressIndicator()),
-    //   DocumentProcessing() =>
-    //     const SizedBox.shrink(), // Center(child: CircularProgressIndicator()),
-    //   DocumentsLoaded() => state.documents.isEmpty
-    //       ? _buildEmptyState()
-    //       : ListView.builder(
-    //           shrinkWrap: true,
-    //           padding: EdgeInsets.symmetric(horizontal: 16),
-    //           itemCount: state.documents.length,
-    //           itemBuilder: (context, index) {
-    //             return DocumentCard(document: state.documents[index]);
-    //           },
-    //         ),
-    //   DocumentsError() => Center(child: Text('Error: ${state.message}')),
-    // };
   }
 
   Widget _buildEmptyState() {
@@ -80,17 +80,20 @@ class _DocumentsTabState extends State<DocumentsTab> {
       builder: (context, state) {
         return RefreshIndicator.adaptive(
           onRefresh: () => cubit.loadDocuments(),
-          child: Column(
-            children: [
-              LogoWidget(signFontSize: 30.0, itFontSize: 30.0),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: SearchWidget(
-                  onChanged: (query) => cubit.searchDocuments(query),
+          child: SingleChildScrollView(
+            physics: ScrollPhysics(),
+            child: Column(
+              children: [
+                LogoWidget(signFontSize: 30.0, itFontSize: 30.0),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: SearchWidget(
+                    onChanged: (query) => cubit.searchDocuments(query),
+                  ),
                 ),
-              ),
-              _buildContent(context, state),
-            ],
+                _buildContent(context, state),
+              ],
+            ),
           ),
         );
       },

@@ -24,10 +24,14 @@ class DocumentsCubit extends Cubit<DocumentsState> {
   List<Document> filteredDocuments = [];
 
   void searchDocuments(String query) {
-    if (state is! DocumentsLoaded) return;
+    if (state is! DocumentsLoaded) {
+      // emit(DocumentsLoaded(allDocuments));
+      return;
+    }
 
+    final lowerQuery = query.toLowerCase();
     filteredDocuments = allDocuments
-        .where((doc) => doc.name.toLowerCase().contains(query.toLowerCase()))
+        .where((doc) => doc.name.toLowerCase().contains(lowerQuery))
         .toList();
 
     emit(DocumentsLoaded(allDocuments, filteredDocuments: filteredDocuments));
@@ -39,6 +43,7 @@ class DocumentsCubit extends Cubit<DocumentsState> {
       final documents = await repository.getDocuments();
       allDocuments.clear();
       allDocuments = List.from(documents);
+      filteredDocuments.clear();
       emit(DocumentsLoaded(documents));
     } catch (e) {
       emit(DocumentsError(e.toString()));
