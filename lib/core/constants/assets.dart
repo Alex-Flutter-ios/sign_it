@@ -28,6 +28,9 @@ enum AppImageAssets implements ImageAssets {
   share('assets/images/share.png'),
   print('assets/images/print.png'),
   delete('assets/images/delete.png'),
+
+  //Tools specific
+  gear('assets/images/gear.png'),
   ;
 
   @override

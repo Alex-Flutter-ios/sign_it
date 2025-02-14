@@ -6,8 +6,23 @@ import 'package:scaner_test_task/core/constants/assets.dart';
 import '../../data/models/document.dart';
 import '../cubit/documents_cubit.dart';
 
-class DocumentInfoScreen extends StatelessWidget {
+class DocumentInfoScreen extends StatefulWidget {
   const DocumentInfoScreen({super.key});
+
+  @override
+  State<DocumentInfoScreen> createState() => _DocumentInfoScreenState();
+}
+
+class _DocumentInfoScreenState extends State<DocumentInfoScreen> {
+  int _currentPage = 0;
+  int _totalPages = 0;
+
+  late PDFViewController _pdfViewController;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   Widget _buildActionButton(String icon, void Function()? onTap) {
     return InkWell(
@@ -16,13 +31,30 @@ class DocumentInfoScreen extends StatelessWidget {
     );
   }
 
+  List<Widget> _buildPageIndicators(int currentPage, int totalPages) {
+    final List<Widget> indicators = [];
+    for (int i = 0; i < totalPages; i++) {
+      indicators.add(Container(
+        margin: const EdgeInsets.symmetric(horizontal: 4),
+        width: 8,
+        height: 8,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: i == currentPage ? const Color(0xFF364EFF) : Color(0xFFF2F4FF),
+        ),
+      ));
+    }
+
+    return indicators;
+  }
+
   @override
   Widget build(BuildContext context) {
     final doc = ModalRoute.of(context)?.settings.arguments as Document?;
     if (doc == null) {
       return Scaffold(
         appBar: AppBar(),
-        body: Center(child: Text('Документ не найден')),
+        body: Center(child: Text('Document not found')),
       );
     }
     final DocumentsCubit cubit = BlocProvider.of<DocumentsCubit>(context);
@@ -36,11 +68,6 @@ class DocumentInfoScreen extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
-          // const SizedBox(width: 24.0),
-          // InkWell(
-          //   child: const Icon(Icons.arrow_back, color: Color(0xFF364EFF)),
-          //   onTap: () => Navigator.of(context).pop(),
-          // ),
           DecoratedBox(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -61,10 +88,10 @@ class DocumentInfoScreen extends StatelessWidget {
                     () => cubit.printDocument(doc),
                   ),
                   const SizedBox(width: 8.0),
-                  _buildActionButton(
-                    AppImageAssets.delete.asset,
-                    () => cubit.deleteDocument(doc.id),
-                  ),
+                  _buildActionButton(AppImageAssets.delete.asset, () {
+                    cubit.deleteDocument(doc.id);
+                    Navigator.of(context).pop();
+                  }),
                 ],
               ),
             ),
@@ -74,14 +101,40 @@ class DocumentInfoScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
-        child: SizedBox(
-          height: MediaQuery.sizeOf(context).height / 1.5,
-          child: PDFView(
-            filePath: doc.path,
-            onError: (error) {
-              debugPrint("PDFView Error: $error");
-            },
-          ),
+        child: Column(
+          children: [
+            Expanded(
+              child: PDFView(
+                filePath: doc.path,
+                swipeHorizontal: true,
+                // pageFling: true,
+                onViewCreated: (PDFViewController vc) {
+                  _pdfViewController = vc;
+                },
+                onRender: (pages) {
+                  setState(() {
+                    _totalPages = pages ?? 0;
+                  });
+                },
+                onPageChanged: (page, total) {
+                  setState(() {
+                    _currentPage = page ?? 0;
+                    _totalPages = total ?? 0;
+                  });
+                },
+                onError: (error) {
+                  debugPrint('PDFView Error: $error');
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: _buildPageIndicators(_currentPage, _totalPages),
+              ),
+            ),
+          ],
         ),
       ),
     );

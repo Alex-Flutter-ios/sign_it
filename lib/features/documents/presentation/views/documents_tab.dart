@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:scaner_test_task/core/widgets/logo_widget.dart';
+import 'package:scaner_test_task/core/widgets/header_widget.dart';
 import 'package:scaner_test_task/core/widgets/search_widget.dart';
 import 'package:scaner_test_task/features/documents/presentation/cubit/documents_cubit.dart';
 
@@ -74,7 +74,7 @@ class _DocumentsTabState extends State<DocumentsTab> {
             physics: ScrollPhysics(),
             child: Column(
               children: [
-                LogoWidget(signFontSize: 30.0, itFontSize: 30.0),
+                HeaderWidget(signFontSize: 30.0, itFontSize: 30.0),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: SearchWidget(

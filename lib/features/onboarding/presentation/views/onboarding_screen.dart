@@ -40,7 +40,6 @@ class OnboardingContentState extends State<OnboardingContent> {
     super.initState();
     _controller.addListener(() {
       if (_controller.position.userScrollDirection == ScrollDirection.reverse) {
-        // Блокируем прокрутку назад
         if (_controller.page! < _currentPage) {
           _controller.jumpToPage(_currentPage);
         }

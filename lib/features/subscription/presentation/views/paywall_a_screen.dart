@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scaner_test_task/core/constants/assets.dart';
 import 'package:scaner_test_task/core/constants/routes.dart';
-import 'package:scaner_test_task/core/widgets/logo_widget.dart';
+import 'package:scaner_test_task/core/widgets/header_widget.dart';
 import 'package:scaner_test_task/features/subscription/presentation/views/widgets/total_widget.dart';
 import '../cubit/subscription_cubit.dart';
 import 'widgets/bottom_button.dart';
@@ -74,7 +74,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                                   horizontal: 16.0,
                                   vertical: 12.0,
                                 ),
-                                child: LogoWidget(),
+                                child: HeaderWidget(),
                               ),
                             ),
                           ],
