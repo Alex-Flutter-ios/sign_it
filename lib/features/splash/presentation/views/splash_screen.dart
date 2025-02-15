@@ -32,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return BlocListener<OnboardingCubit, OnboardingState>(
       listener: (context, state) {
         _timer = Timer(const Duration(seconds: 2), () {
-          if (!mounted) return; // Проверка, что виджет ещё смонтирован
+          if (!mounted) return;
 
           context.read<OnboardingCubit>().checkOnboardingStatus();
           if (state is OnboardingShow) {
