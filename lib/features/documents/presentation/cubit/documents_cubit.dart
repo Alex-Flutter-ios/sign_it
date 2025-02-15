@@ -299,12 +299,5 @@ class DocumentsCubit extends Cubit<DocumentsState> {
     } catch (e) {
       emit(DocumentsError(e.toString()));
     }
-    // emit(DocumentProcessing());
-    // try {
-    //   await repository.deleteDocument(documentId);
-    //   await loadDocuments();
-    // } catch (e) {
-    //   emit(DocumentsError(e.toString()));
-    // }
   }
 }
