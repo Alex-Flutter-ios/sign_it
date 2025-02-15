@@ -32,15 +32,23 @@ class DocumentLocalDataSource {
     return newFile.path;
   }
 
-  Future<void> deleteDocument(String id) async {
-    final keyToDelete = _box.keys.firstWhere(
-      (key) => (_box.get(key) as Document).id == id,
-      orElse: () => null,
-    );
-    if (keyToDelete != null) {
-      _box.delete(keyToDelete);
-      final taskList = _box.values.map((e) => e).toList();
-      debugPrint('TASKS IN BOX: ${taskList.length}');
+  Future<void> deleteDocument(String documentId) async {
+    final document = _box.get(documentId);
+    if (document != null) {
+      final file = File(document.path);
+      if (await file.exists()) {
+        await file.delete();
+      }
+      await _box.delete(documentId);
     }
+    // final keyToDelete = _box.keys.firstWhere(
+    //   (key) => (_box.get(key) as Document).id == id,
+    //   orElse: () => null,
+    // );
+    // if (keyToDelete != null) {
+    //   _box.delete(keyToDelete);
+    //   final taskList = _box.values.map((e) => e).toList();
+    //   debugPrint('TASKS IN BOX: ${taskList.length}');
+    // }
   }
 }

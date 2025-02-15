@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
@@ -16,8 +18,6 @@ class DocumentInfoScreen extends StatefulWidget {
 class _DocumentInfoScreenState extends State<DocumentInfoScreen> {
   int _currentPage = 0;
   int _totalPages = 0;
-
-  late PDFViewController _pdfViewController;
 
   @override
   void initState() {
@@ -51,7 +51,7 @@ class _DocumentInfoScreenState extends State<DocumentInfoScreen> {
   @override
   Widget build(BuildContext context) {
     final doc = ModalRoute.of(context)?.settings.arguments as Document?;
-    if (doc == null) {
+    if (doc == null || !File(doc.path).existsSync()) {
       return Scaffold(
         appBar: AppBar(),
         body: Center(child: Text('Document not found')),
@@ -88,9 +88,11 @@ class _DocumentInfoScreenState extends State<DocumentInfoScreen> {
                     () => cubit.printDocument(doc),
                   ),
                   const SizedBox(width: 8.0),
-                  _buildActionButton(AppImageAssets.delete.asset, () {
-                    cubit.deleteDocument(doc.id);
-                    Navigator.of(context).pop();
+                  _buildActionButton(AppImageAssets.delete.asset, () async {
+                    await cubit.deleteDocument(doc.id);
+                    if (mounted) {
+                      Navigator.of(context).pop();
+                    }
                   }),
                 ],
               ),
@@ -108,9 +110,7 @@ class _DocumentInfoScreenState extends State<DocumentInfoScreen> {
                 filePath: doc.path,
                 swipeHorizontal: true,
                 // pageFling: true,
-                onViewCreated: (PDFViewController vc) {
-                  _pdfViewController = vc;
-                },
+                onViewCreated: (PDFViewController vc) {},
                 onRender: (pages) {
                   setState(() {
                     _totalPages = pages ?? 0;

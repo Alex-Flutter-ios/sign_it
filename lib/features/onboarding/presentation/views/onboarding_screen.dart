@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:scaner_test_task/core/constants/routes.dart';
+import 'package:scaner_test_task/core/widgets/custom_loader_widget.dart';
 import '../cubit/onboarding_cubit.dart';
 import 'widgets/onboarding_page.dart';
 
@@ -16,7 +17,7 @@ class OnboardingScreen extends StatelessWidget {
         return Scaffold(
           body: state is OnboardingShow
               ? OnboardingContent(firstTime: state.firstTime)
-              : const Center(child: CircularProgressIndicator()),
+              : const Center(child: CustomLoaderWidget()),
         );
       },
     );

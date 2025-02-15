@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scaner_test_task/core/constants/assets.dart';
 import 'package:scaner_test_task/core/constants/routes.dart';
+import 'package:scaner_test_task/core/widgets/custom_loader_widget.dart';
 import 'package:scaner_test_task/core/widgets/header_widget.dart';
 import 'package:scaner_test_task/features/subscription/presentation/views/widgets/total_widget.dart';
 import '../cubit/subscription_cubit.dart';
@@ -280,7 +281,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                         ),
                       ),
                       if (state is SubscriptionLoading)
-                        Center(child: CircularProgressIndicator.adaptive()),
+                        Center(child: CustomLoaderWidget()),
                     ],
                   );
                 },

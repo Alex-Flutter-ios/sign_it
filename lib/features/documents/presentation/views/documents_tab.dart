@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:scaner_test_task/core/widgets/custom_loader_widget.dart';
 import 'package:scaner_test_task/core/widgets/header_widget.dart';
 import 'package:scaner_test_task/core/widgets/search_widget.dart';
 import 'package:scaner_test_task/features/documents/presentation/cubit/documents_cubit.dart';
@@ -28,7 +29,7 @@ class _DocumentsTabState extends State<DocumentsTab> {
   Widget _buildContent(BuildContext context, DocumentsState state) {
     if (state is DocumentsInitial) return const SizedBox.shrink();
     if (state is DocumentsLoading) {
-      return Center(child: CircularProgressIndicator());
+      return Center(child: CustomLoaderWidget());
     }
     if (state is DocumentsLoaded) {
       final docsToShow = state.filteredDocuments.isNotEmpty
@@ -45,7 +46,8 @@ class _DocumentsTabState extends State<DocumentsTab> {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         itemCount: docsToShow.length,
         itemBuilder: (context, index) {
-          return DocumentCard(document: docsToShow[index]);
+          final document = docsToShow[index];
+          return DocumentCard(document: document);
         },
       );
     }
@@ -70,20 +72,26 @@ class _DocumentsTabState extends State<DocumentsTab> {
       builder: (context, state) {
         return RefreshIndicator.adaptive(
           onRefresh: () => cubit.loadDocuments(),
-          child: SingleChildScrollView(
-            physics: ScrollPhysics(),
-            child: Column(
-              children: [
-                HeaderWidget(signFontSize: 30.0, itFontSize: 30.0),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: SearchWidget(
-                    onChanged: (query) => cubit.searchDocuments(query),
-                  ),
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                physics: ScrollPhysics(),
+                child: Column(
+                  children: [
+                    HeaderWidget(signFontSize: 30.0, itFontSize: 30.0),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: SearchWidget(
+                        onChanged: (query) => cubit.searchDocuments(query),
+                      ),
+                    ),
+                    _buildContent(context, state),
+                  ],
                 ),
-                _buildContent(context, state),
-              ],
-            ),
+              ),
+              if (state is DocumentProcessing)
+                Center(child: CustomLoaderWidget()),
+            ],
           ),
         );
       },

@@ -27,7 +27,6 @@ class DocumentsCubit extends Cubit<DocumentsState> {
 
   void searchDocuments(String query) {
     if (state is! DocumentsLoaded) {
-      // emit(DocumentsLoaded(allDocuments));
       return;
     }
 
@@ -54,7 +53,7 @@ class DocumentsCubit extends Cubit<DocumentsState> {
 
   Future<void> scanDocument() async {
     try {
-      // emit(DocumentProcessing());
+      emit(DocumentProcessing());
       final file = await _scanDocument();
       if (file != null) {
         final originalName = p.basename(file.path);
@@ -67,7 +66,7 @@ class DocumentsCubit extends Cubit<DocumentsState> {
 
   Future<void> pickFromGallery() async {
     try {
-      // emit(DocumentProcessing());
+      emit(DocumentProcessing());
       final file = await _pickImage();
       if (file != null) {
         final originalName = p.basename(file.path);
@@ -80,7 +79,7 @@ class DocumentsCubit extends Cubit<DocumentsState> {
 
   Future<void> pickFromFiles() async {
     try {
-      // emit(DocumentProcessing());
+      emit(DocumentProcessing());
       final file = await _pickFile();
       if (file != null) {
         final originalName = p.basename(file.path);
@@ -294,8 +293,18 @@ class DocumentsCubit extends Cubit<DocumentsState> {
     try {
       await repository.deleteDocument(documentId);
       await loadDocuments();
+      if (state is DocumentsLoaded) {
+        emit(DocumentsLoaded(allDocuments));
+      }
     } catch (e) {
       emit(DocumentsError(e.toString()));
     }
+    // emit(DocumentProcessing());
+    // try {
+    //   await repository.deleteDocument(documentId);
+    //   await loadDocuments();
+    // } catch (e) {
+    //   emit(DocumentsError(e.toString()));
+    // }
   }
 }
