@@ -12,11 +12,17 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
   SubscriptionService get service => _service;
 
   Future<void> checkSubscription() async {
-    emit(SubscriptionLoading());
     try {
+      emit(SubscriptionLoading());
+      debugPrint('[SubscriptionCubit] checkSubscription -> init service...');
+      await _service.init();
+
       final isPremium = _service.isPremiumUser();
+      debugPrint(
+          '[SubscriptionCubit] checkSubscription -> isPremium=$isPremium');
       emit(SubscriptionLoaded(isPremium: isPremium));
     } catch (e) {
+      debugPrint('[SubscriptionCubit] checkSubscription error: $e');
       emit(SubscriptionError(e.toString()));
     }
   }
@@ -24,11 +30,17 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
   Future<void> purchase(String packageId) async {
     emit(SubscriptionLoading());
     try {
+      debugPrint('[SubscriptionCubit] purchase($packageId) start');
       final success = await _service.purchasePackage(packageId);
-      emit(success
-          ? SubscriptionLoaded(isPremium: true)
-          : SubscriptionError('Purchase failed'));
+      debugPrint(
+          '[SubscriptionCubit] purchase($packageId) -> success=$success');
+      if (success) {
+        emit(SubscriptionLoaded(isPremium: true));
+      } else {
+        emit(SubscriptionError('Purchase failed'));
+      }
     } catch (e) {
+      debugPrint('[SubscriptionCubit] purchase($packageId) -> error: $e');
       emit(SubscriptionError(e.toString()));
     }
   }
@@ -36,20 +48,28 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
   Future<void> restore() async {
     emit(SubscriptionLoading());
     try {
+      debugPrint('[SubscriptionCubit] restore() start');
       final success = await _service.restorePurchases();
-      emit(success
-          ? SubscriptionLoaded(isPremium: true)
-          : SubscriptionRestoreFailed('No subscriptions found'));
+      debugPrint('[SubscriptionCubit] restore() -> success=$success');
+      if (success) {
+        emit(SubscriptionLoaded(isPremium: true));
+      } else {
+        emit(SubscriptionRestoreFailed('No subscriptions found'));
+      }
     } catch (e) {
+      debugPrint('[SubscriptionCubit] restore() -> error: $e');
       emit(SubscriptionError(e.toString()));
     }
   }
 
   Future<String> getPaywallType() async {
-    return await _service.getPaywallType();
+    debugPrint('[SubscriptionCubit] getPaywallType()');
+    return _service.getPaywallType();
   }
 
   bool isPremiumUser() {
-    return _service.isPremiumUser();
+    final premium = _service.isPremiumUser();
+    debugPrint('[SubscriptionCubit] isPremiumUser() -> $premium');
+    return premium;
   }
 }

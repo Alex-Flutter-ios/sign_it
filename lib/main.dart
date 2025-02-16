@@ -33,7 +33,7 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(DocumentAdapter());
   final box = await Hive.openBox<Document>('documents');
-  box.clear();
+  // box.clear();
 
   //shared preferences initialization
   final prefs = await SharedPreferences.getInstance();
@@ -69,7 +69,7 @@ void main() async {
           create: (context) => OnboardingRepository(prefs),
         ),
         RepositoryProvider<SubscriptionService>(
-          create: (_) => StoreKitSubscriptionService()..init(),
+          create: (_) => StoreKitSubscriptionService(),
         ),
         RepositoryProvider(
           create: (_) => DocumentLocalDataSource(box),

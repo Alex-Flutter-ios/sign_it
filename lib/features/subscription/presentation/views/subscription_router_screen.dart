@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scaner_test_task/core/utils/routers/routes.dart';
+import 'package:scaner_test_task/core/widgets/custom_loader_widget.dart';
 import '../cubit/subscription_cubit.dart';
 import 'paywall_a_screen.dart';
 
@@ -13,9 +14,9 @@ class SubscriptionRouterScreen extends StatefulWidget {
 }
 
 class _SubscriptionRouterScreenState extends State<SubscriptionRouterScreen> {
+  late SubscriptionCubit cubit;
   bool? isPremium;
   String? paywallType;
-  late SubscriptionCubit cubit;
 
   @override
   void initState() {
@@ -43,21 +44,31 @@ class _SubscriptionRouterScreenState extends State<SubscriptionRouterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // return BlocListener<SubscriptionCubit, SubscriptionState>(
+    //   listener: (context, state) {
+    //     final subCubit = context.read<SubscriptionCubit>();
+    //     final subState = subCubit.state;
+    //     if (subState is SubscriptionLoaded && subState.isPremium) {
+    //       WidgetsBinding.instance.addPostFrameCallback((_) {
+    //         Navigator.pushReplacementNamed(context, Routes.documents.name);
+    //       });
+    //     } else {
+    //       PaywallScreen(paywallType: paywallType ?? '');
+    //     }
+    //   },
+    //   // child: PaywallScreen(paywallType: paywallType ?? ''),
+    // );
+
     if (isPremium == null && paywallType == null) {
-      return const Scaffold(body: SizedBox.shrink());
+      return const Scaffold(body: Center(child: CustomLoaderWidget()));
     }
 
     if (isPremium == true) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.pushReplacementNamed(context, Routes.documents.name);
       });
-      return const Scaffold(body: SizedBox.shrink());
+      return const Scaffold(body: Center(child: CustomLoaderWidget()));
     }
     return PaywallScreen(paywallType: paywallType ?? '');
-    // return paywallType == 'b'
-    //     ? const PaywallBScreen()
-    //     : PaywallAScreen(
-    //         paywallType: paywallType ?? '',
-    //       );
   }
 }

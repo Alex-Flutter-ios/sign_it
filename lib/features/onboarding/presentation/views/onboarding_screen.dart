@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:scaner_test_task/core/utils/routers/routes.dart';
 import 'package:scaner_test_task/core/widgets/custom_loader_widget.dart';
+import '../../../subscription/presentation/cubit/subscription_cubit.dart';
 import '../cubit/onboarding_cubit.dart';
 import 'widgets/onboarding_page.dart';
 
@@ -111,7 +112,14 @@ class OnboardingContentState extends State<OnboardingContent> {
     return BlocListener<OnboardingCubit, OnboardingState>(
       listener: (context, state) {
         if (state is OnboardingCompleted) {
-          Navigator.pushReplacementNamed(context, Routes.subscription.name);
+          final subCubit = context.read<SubscriptionCubit>();
+          final subState = subCubit.state;
+          if (subState is SubscriptionLoaded && subState.isPremium) {
+            Navigator.pushReplacementNamed(context, Routes.documents.name);
+          } else {
+            Navigator.pushReplacementNamed(context, Routes.subscription.name);
+          }
+          // Navigator.pushReplacementNamed(context, Routes.subscription.name);
         }
       },
       child: SafeArea(

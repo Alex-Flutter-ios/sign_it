@@ -128,7 +128,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
                           ),
                           const Spacer(),
                           InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.pushReplacementNamed(
+                                  context, Routes.documents.name);
+                            },
                             child: Icon(
                               Icons.close,
                               color: const Color.fromARGB(81, 255, 255, 255),
@@ -189,13 +192,11 @@ class _PaywallScreenState extends State<PaywallScreen> {
                         Routes.documents.name,
                         (route) => false,
                       );
+                    }
 
-                      // Navigator.pushReplacementNamed(
-                      //     context, Routes.documents.name);
-                    }
-                    if (state is SubscriptionError) {
-                      _showErrorDialog(state.message);
-                    }
+                    // if (state is SubscriptionError) {
+                    //   _showErrorDialog(state.message);
+                    // }
                   },
                   builder: (context, state) {
                     return Stack(
@@ -265,11 +266,6 @@ class _PaywallScreenState extends State<PaywallScreen> {
                                           try {
                                             await subscriptionCubit
                                                 .purchase(productId);
-                                            if (mounted &&
-                                                subscriptionCubit.state
-                                                    is SubscriptionLoaded) {
-                                              Navigator.pop(context);
-                                            }
                                           } catch (_) {}
                                         },
                                         title: _isTrialSelected

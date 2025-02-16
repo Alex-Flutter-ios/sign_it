@@ -18,11 +18,15 @@ class DocumentInfoScreen extends StatefulWidget {
 }
 
 class _DocumentInfoScreenState extends State<DocumentInfoScreen> {
+  late SubscriptionCubit subscriptionCubit;
+  late DocumentsCubit documentsCubit;
   int _currentPage = 0;
   int _totalPages = 0;
 
   @override
   void initState() {
+    subscriptionCubit = context.read<SubscriptionCubit>();
+    documentsCubit = BlocProvider.of<DocumentsCubit>(context);
     super.initState();
   }
 
@@ -59,7 +63,6 @@ class _DocumentInfoScreenState extends State<DocumentInfoScreen> {
         body: Center(child: Text('Document not found')),
       );
     }
-    final DocumentsCubit cubit = BlocProvider.of<DocumentsCubit>(context);
 
     return Scaffold(
       backgroundColor: Color(0xFFF2F4FF),
@@ -82,48 +85,33 @@ class _DocumentInfoScreenState extends State<DocumentInfoScreen> {
                 children: [
                   _buildActionButton(
                     AppImageAssets.share.asset,
-                    () => cubit.shareDocument(doc),
+                    () => documentsCubit.shareDocument(doc),
                   ),
                   const SizedBox(width: 8.0),
                   _buildActionButton(
                     AppImageAssets.print.asset,
-                    () {
-                      final subscriptionCubit =
-                          context.read<SubscriptionCubit>();
+                    () async {
+                      final subState = subscriptionCubit.state;
                       final isPremium =
-                          subscriptionCubit.state is SubscriptionLoaded &&
-                              (subscriptionCubit.state as SubscriptionLoaded)
-                                  .isPremium;
-
-                      if (!isPremium) {
-                        Navigator.push(
+                          subState is SubscriptionLoaded && subState.isPremium;
+                      if (isPremium) {
+                        documentsCubit.printDocument(doc);
+                      } else {
+                        final purchased = await Navigator.push<bool>(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => BlocProvider.value(
-                              value: subscriptionCubit,
-                              child: PaywallScreen(),
-                            ),
+                            builder: (_) => const PaywallScreen(),
                           ),
                         );
-                        if (subscriptionCubit.state is SubscriptionLoaded) {
-                          cubit.printDocument(doc);
+                        if (purchased == true) {
+                          documentsCubit.printDocument(doc);
                         }
-                        return;
                       }
-                      cubit.printDocument(doc);
-
-                      // final isPremium = subscriptionCubit.isPremiumUser();
-
-                      // if (!isPremium) {
-                      //   Navigator.pushNamed(context, Routes.paywallA.name);
-                      //   return;
-                      // }
-                      // cubit.printDocument(doc);
                     },
                   ),
                   const SizedBox(width: 8.0),
                   _buildActionButton(AppImageAssets.delete.asset, () async {
-                    await cubit.deleteDocument(doc.id);
+                    await documentsCubit.deleteDocument(doc.id);
                     if (mounted) {
                       Navigator.of(context).pop();
                     }
