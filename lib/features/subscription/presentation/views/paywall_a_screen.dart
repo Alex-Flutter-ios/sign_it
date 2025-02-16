@@ -219,104 +219,103 @@ class _PaywallScreenState extends State<PaywallScreen> {
                   const SizedBox(height: 8),
                   Stack(
                     children: [
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 12,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFFFFFFF),
-                            borderRadius: BorderRadius.circular(28.0),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.all(16),
-                                color: Colors.white,
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    // 3-Day Free Trial
-                                    PlanRow(
-                                      title: '3-Day Free Trial',
-                                      subtitle: 'then 4.99\$/week',
-                                      price: '\$0.00',
-                                      isSelected: _isTrialSelected,
-                                      onTap: () {
-                                        setState(() {
-                                          _isTrialSelected = true;
-                                          totalPrice = 0.00;
-                                        });
-                                      },
-                                    ),
-                                    const SizedBox(height: 8),
-                                    // Annual plan
-                                    PlanRow(
-                                      title: 'Annual plan',
-                                      subtitle: 'Enjoy unlimited access!',
-                                      price: '\$39.99',
-                                      isSelected: !_isTrialSelected,
-                                      onTap: () {
-                                        setState(() {
-                                          _isTrialSelected = false;
-                                          totalPrice = 39.99;
-                                        });
-                                      },
-                                    ),
-                                    const SizedBox(height: 16),
-                                    widget.paywallType == 'b'
-                                        ? TotalWidget(
-                                            title: 'Total',
-                                            price: '$totalPrice',
-                                          )
-                                        : const SizedBox.shrink(),
+                      Container(
+                        height: MediaQuery.sizeOf(context).height * 0.4,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFFFFF),
+                          borderRadius: BorderRadius.circular(28.0),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Container(
+                              // width: double.infinity,
+                              padding: const EdgeInsets.all(16),
+                              // color: Colors.white,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  // 3-Day Free Trial
+                                  PlanRow(
+                                    title: '3-Day Free Trial',
+                                    subtitle: 'then 4.99\$/week',
+                                    price: '\$0.00',
+                                    isSelected: _isTrialSelected,
+                                    onTap: () {
+                                      setState(() {
+                                        _isTrialSelected = true;
+                                        totalPrice = 0.00;
+                                      });
+                                    },
+                                  ),
+                                  const SizedBox(height: 8),
+                                  // Annual plan
+                                  PlanRow(
+                                    title: 'Annual plan',
+                                    subtitle: 'Enjoy unlimited access!',
+                                    price: '\$39.99',
+                                    isSelected: !_isTrialSelected,
+                                    onTap: () {
+                                      setState(() {
+                                        _isTrialSelected = false;
+                                        totalPrice = 39.99;
+                                      });
+                                    },
+                                  ),
+                                  const SizedBox(height: 16),
+                                  widget.paywallType == 'b'
+                                      ? TotalWidget(
+                                          title: 'Total',
+                                          price: '$totalPrice',
+                                        )
+                                      : const SizedBox.shrink(),
 
-                                    GradientButton(
-                                      onPressed: () async {
-                                        final productId = _isTrialSelected
-                                            ? _trialProductId
-                                            : _annualProductId;
+                                  GradientButton(
+                                    onPressed: () async {
+                                      final productId = _isTrialSelected
+                                          ? _trialProductId
+                                          : _annualProductId;
 
-                                        try {
-                                          await subscriptionCubit
-                                              .purchase(productId);
-                                        } catch (_) {}
-                                      },
-                                      title: _isTrialSelected
-                                          ? 'Try For Free'
-                                          : 'Continue',
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        BottobButton(
-                                          text: 'Terms',
-                                          onPressed: () {},
-                                        ),
-                                        const Spacer(),
-                                        BottobButton(
-                                          text: 'Privacy',
-                                          onPressed: () {},
-                                        ),
-                                        const Spacer(),
-                                        BottobButton(
-                                          text: 'Restore',
-                                          onPressed: () {
-                                            subscriptionCubit.restore();
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                      try {
+                                        await subscriptionCubit
+                                            .purchase(productId);
+                                      } catch (_) {}
+                                    },
+                                    title: _isTrialSelected
+                                        ? 'Try For Free'
+                                        : 'Continue',
+                                  ),
+
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      BottobButton(
+                                        text: 'Terms',
+                                        onPressed: () {},
+                                      ),
+                                      const Spacer(),
+                                      BottobButton(
+                                        text: 'Privacy',
+                                        onPressed: () {},
+                                      ),
+                                      const Spacer(),
+                                      BottobButton(
+                                        text: 'Restore',
+                                        onPressed: () {
+                                          subscriptionCubit.restore();
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                       if (state is SubscriptionLoading)
