@@ -122,6 +122,12 @@
       "languageVersion": "2.19"
     },
     {
+      "name": "cli_util",
+      "rootUri": "file:///Users/alex/.pub-cache/hosted/pub.dev/cli_util-0.4.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
       "name": "clock",
       "rootUri": "file:///Users/alex/.pub-cache/hosted/pub.dev/clock-1.1.1",
       "packageUri": "lib/",
@@ -252,6 +258,12 @@
       "rootUri": "file:///Users/alex/.pub-cache/hosted/pub.dev/flutter_bloc-9.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.14"
+    },
+    {
+      "name": "flutter_launcher_icons",
+      "rootUri": "file:///Users/alex/.pub-cache/hosted/pub.dev/flutter_launcher_icons-0.13.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
     },
     {
       "name": "flutter_lints",
@@ -944,7 +956,7 @@
       "languageVersion": "3.6"
     }
   ],
-  "generated": "2025-02-16T13:39:02.990188Z",
+  "generated": "2025-02-16T17:25:02.525165Z",
   "generator": "pub",
   "generatorVersion": "3.6.2",
   "flutterRoot": "file:///Users/alex/Downloads/flutter",

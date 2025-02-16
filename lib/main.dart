@@ -38,10 +38,6 @@ void main() async {
   //shared preferences initialization
   final prefs = await SharedPreferences.getInstance();
 
-  //subscription initialization
-  // final subscriptionService = MockSubscriptionService();
-  // await subscriptionService.init();
-
   //scanbot sdk initialization
   final licenseKey = "bORqy5cafPI7fknl/ShLtRFyu7v+bm" +
       "cC7dEqs06AHT/RNJbB3WlUmsolxPR0" +
