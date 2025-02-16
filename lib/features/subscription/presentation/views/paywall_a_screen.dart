@@ -20,11 +20,17 @@ class PaywallScreen extends StatefulWidget {
 }
 
 class _PaywallScreenState extends State<PaywallScreen> {
-  final Set<String> _kIds = {'qr.trial.7', 'qr.notrial.5'};
+  late SubscriptionCubit subscriptionCubit;
   final String _trialProductId = 'qr.trial.7';
   final String _annualProductId = 'qr.notrial.5';
   bool _isTrialSelected = true;
   double totalPrice = 0.00;
+
+  @override
+  void initState() {
+    subscriptionCubit = context.read<SubscriptionCubit>();
+    super.initState();
+  }
 
   void _showErrorDialog(String message) {
     showDialog(
@@ -178,8 +184,14 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 BlocConsumer<SubscriptionCubit, SubscriptionState>(
                   listener: (context, state) {
                     if (state is SubscriptionLoaded && state.isPremium) {
-                      Navigator.pushReplacementNamed(
-                          context, Routes.documents.name);
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        Routes.documents.name,
+                        (route) => false,
+                      );
+
+                      // Navigator.pushReplacementNamed(
+                      //     context, Routes.documents.name);
                     }
                     if (state is SubscriptionError) {
                       _showErrorDialog(state.message);
@@ -246,16 +258,15 @@ class _PaywallScreenState extends State<PaywallScreen> {
 
                                       GradientButton(
                                         onPressed: () async {
-                                          final cubit =
-                                              context.read<SubscriptionCubit>();
                                           final productId = _isTrialSelected
                                               ? _trialProductId
                                               : _annualProductId;
 
                                           try {
-                                            await cubit.purchase(productId);
+                                            await subscriptionCubit
+                                                .purchase(productId);
                                             if (mounted &&
-                                                cubit.state
+                                                subscriptionCubit.state
                                                     is SubscriptionLoaded) {
                                               Navigator.pop(context);
                                             }
@@ -282,9 +293,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                                           BottobButton(
                                             text: 'Restore',
                                             onPressed: () {
-                                              context
-                                                  .read<SubscriptionCubit>()
-                                                  .restore();
+                                              subscriptionCubit.restore();
                                             },
                                           ),
                                         ],

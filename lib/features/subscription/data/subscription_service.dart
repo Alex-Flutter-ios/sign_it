@@ -1,12 +1,26 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
+import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
 abstract class SubscriptionService {
   Future<void> init();
+  Future<void> dispose();
   bool isPremiumUser();
   Future<bool> purchasePackage(String packageId);
   Future<bool> restorePurchases();
   Future<String> getPaywallType();
+}
+
+class StoreKitDelegate implements SKPaymentQueueDelegateWrapper {
+  @override
+  bool shouldContinueTransaction(SKPaymentTransactionWrapper transaction, _) {
+    return true;
+  }
+
+  @override
+  bool shouldShowPriceConsent() => false;
 }
 
 class StoreKitSubscriptionService implements SubscriptionService {
@@ -15,46 +29,39 @@ class StoreKitSubscriptionService implements SubscriptionService {
   List<PurchaseDetails> _cachedPurchases = [];
   StreamSubscription<List<PurchaseDetails>>? _purchaseSubscription;
 
-  // 1. Инициализация с подпиской на поток покупок
   @override
   Future<void> init() async {
+    if (!(await _iap.isAvailable())) return;
+    if (Platform.isIOS) {
+      final storeKit = InAppPurchaseStoreKitPlatformAddition();
+      await storeKit.setDelegate(StoreKitDelegate());
+    }
+
     _purchaseSubscription = _iap.purchaseStream.listen((purchases) {
       _cachedPurchases = purchases
           .where((p) =>
               p.status == PurchaseStatus.purchased ||
               p.status == PurchaseStatus.restored)
           .toList();
-
-      // Автозавершение покупок для Android
-      for (final purchase in purchases) {
-        if (purchase.pendingCompletePurchase) {
-          _iap.completePurchase(purchase);
-        }
-      }
     });
 
-    // Первоначальная загрузка покупок
     await _iap.restorePurchases();
   }
 
-  // 2. Проверка премиум-статуса
   @override
   bool isPremiumUser() {
     return _cachedPurchases.isNotEmpty;
   }
 
-  // 3. Покупка пакета с обработкой потока
   @override
   Future<bool> purchasePackage(String productId) async {
     final completer = Completer<bool>();
 
-    // Загрузка информации о продукте
     final response = await _iap.queryProductDetails(Set.from({productId}));
     if (response.productDetails.isEmpty) {
       throw Exception('Product not found');
     }
 
-    // Временная подписка на поток покупок
     late StreamSubscription<List<PurchaseDetails>> subscription;
     subscription = _iap.purchaseStream.listen((purchases) {
       for (final purchase in purchases) {
@@ -75,11 +82,9 @@ class StoreKitSubscriptionService implements SubscriptionService {
       }
     });
 
-    // Инициирование покупки
     await _iap.buyNonConsumable(
       purchaseParam: PurchaseParam(
         productDetails: response.productDetails.first,
-        applicationUserName: null,
       ),
     );
 
@@ -89,7 +94,6 @@ class StoreKitSubscriptionService implements SubscriptionService {
     );
   }
 
-  // 4. Восстановление покупок с обновлением кеша
   @override
   Future<bool> restorePurchases() async {
     await _iap.restorePurchases();
@@ -97,12 +101,16 @@ class StoreKitSubscriptionService implements SubscriptionService {
     return _cachedPurchases.isNotEmpty;
   }
 
-  // 5. Метод для очистки ресурсов
-  void dispose() {
+  @override
+  Future<void> dispose() async {
+    if (Platform.isIOS) {
+      final iosPlatformAddition =
+          _iap.getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
+      await iosPlatformAddition.setDelegate(null);
+    }
     _purchaseSubscription?.cancel();
   }
 
-  // 6. Получение типа Paywall из метаданных
   @override
   Future<String> getPaywallType() async {
     final products = await _iap.queryProductDetails(_productIds.toSet());
