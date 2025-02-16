@@ -100,9 +100,13 @@ class _DocumentInfoScreenState extends State<DocumentInfoScreen> {
                         final purchased = await Navigator.push<bool>(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const PaywallScreen(),
+                            builder: (_) => PaywallScreen(
+                              fromDocumentInfo: true,
+                              onClose: () => Navigator.pop(context, false),
+                            ),
                           ),
                         );
+                        debugPrint('purchased: $purchased');
                         if (purchased == true) {
                           documentsCubit.printDocument(doc);
                         }

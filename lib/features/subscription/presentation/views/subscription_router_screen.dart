@@ -44,21 +44,6 @@ class _SubscriptionRouterScreenState extends State<SubscriptionRouterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // return BlocListener<SubscriptionCubit, SubscriptionState>(
-    //   listener: (context, state) {
-    //     final subCubit = context.read<SubscriptionCubit>();
-    //     final subState = subCubit.state;
-    //     if (subState is SubscriptionLoaded && subState.isPremium) {
-    //       WidgetsBinding.instance.addPostFrameCallback((_) {
-    //         Navigator.pushReplacementNamed(context, Routes.documents.name);
-    //       });
-    //     } else {
-    //       PaywallScreen(paywallType: paywallType ?? '');
-    //     }
-    //   },
-    //   // child: PaywallScreen(paywallType: paywallType ?? ''),
-    // );
-
     if (isPremium == null && paywallType == null) {
       return const Scaffold(body: Center(child: CustomLoaderWidget()));
     }
@@ -69,6 +54,10 @@ class _SubscriptionRouterScreenState extends State<SubscriptionRouterScreen> {
       });
       return const Scaffold(body: Center(child: CustomLoaderWidget()));
     }
-    return PaywallScreen(paywallType: paywallType ?? '');
+    return PaywallScreen(
+        paywallType: paywallType ?? '',
+        onClose: () {
+          Navigator.pushReplacementNamed(context, Routes.documents.name);
+        });
   }
 }
