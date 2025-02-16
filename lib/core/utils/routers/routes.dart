@@ -5,7 +5,6 @@ enum Routes {
   documents,
   documentInfo,
   paywallA,
-  // paywallB,
 }
 
 extension RoutesExtension on Routes {
@@ -23,8 +22,6 @@ extension RoutesExtension on Routes {
         return '/documentInfo';
       case Routes.paywallA:
         return '/paywallA';
-      // case Routes.paywallB:
-      //   return '/paywallB';
     }
   }
 }
