@@ -44,18 +44,14 @@ class _SubscriptionRouterScreenState extends State<SubscriptionRouterScreen> {
   @override
   Widget build(BuildContext context) {
     if (isPremium == null && paywallType == null) {
-      return const Scaffold(
-        body: SizedBox.shrink(),
-      );
+      return const Scaffold(body: SizedBox.shrink());
     }
 
     if (isPremium == true) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.pushReplacementNamed(context, Routes.documents.name);
       });
-      return const Scaffold(
-        body: SizedBox.shrink(),
-      );
+      return const Scaffold(body: SizedBox.shrink());
     }
     return PaywallScreen(paywallType: paywallType ?? '');
     // return paywallType == 'b'

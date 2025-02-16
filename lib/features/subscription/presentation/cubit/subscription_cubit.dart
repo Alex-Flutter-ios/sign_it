@@ -1,4 +1,3 @@
-// features/subscription/presentation/cubit/subscription_cubit.dart
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scaner_test_task/features/subscription/data/subscription_service.dart';
@@ -15,7 +14,7 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
   Future<void> checkSubscription() async {
     emit(SubscriptionLoading());
     try {
-      final isPremium = await _service.isPremiumUser();
+      final isPremium = _service.isPremiumUser();
       emit(SubscriptionLoaded(isPremium: isPremium));
     } catch (e) {
       emit(SubscriptionError(e.toString()));
@@ -26,7 +25,9 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
     emit(SubscriptionLoading());
     try {
       final success = await _service.purchasePackage(packageId);
-      emit(SubscriptionLoaded(isPremium: success));
+      emit(success
+          ? SubscriptionLoaded(isPremium: true)
+          : SubscriptionError('Purchase failed'));
     } catch (e) {
       emit(SubscriptionError(e.toString()));
     }
@@ -36,11 +37,9 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
     emit(SubscriptionLoading());
     try {
       final success = await _service.restorePurchases();
-      if (success) {
-        emit(SubscriptionLoaded(isPremium: true));
-      } else {
-        emit(SubscriptionRestoreFailed('No active subscription found'));
-      }
+      emit(success
+          ? SubscriptionLoaded(isPremium: true)
+          : SubscriptionRestoreFailed('No subscriptions found'));
     } catch (e) {
       emit(SubscriptionError(e.toString()));
     }
@@ -48,5 +47,9 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
 
   Future<String> getPaywallType() async {
     return await _service.getPaywallType();
+  }
+
+  bool isPremiumUser() {
+    return _service.isPremiumUser();
   }
 }

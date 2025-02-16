@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:scaner_test_task/core/constants/routes.dart';
+import 'package:scaner_test_task/core/utils/routers/routes.dart';
 import 'package:scaner_test_task/features/documents/data/models/document.dart';
 
 import 'pdf_preview_widget.dart';

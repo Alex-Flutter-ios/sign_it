@@ -1,1 +1,0 @@
- /Users/alex/scaner_test_task/.dart_tool/flutter_build/9e3c96446fe4e20969fd3f9577cf7802/native_assets.yaml: 

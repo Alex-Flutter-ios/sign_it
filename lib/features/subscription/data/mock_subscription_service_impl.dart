@@ -5,14 +5,14 @@ class MockSubscriptionService implements SubscriptionService {
   bool _secondPayout = false;
 
   @override
-  Future<void> initialize() async {
+  Future<void> init() async {
     await Future.delayed(const Duration(seconds: 1));
     _premium = false;
     _secondPayout = true;
   }
 
   @override
-  Future<bool> isPremiumUser() async {
+  bool isPremiumUser() {
     return _premium;
   }
 

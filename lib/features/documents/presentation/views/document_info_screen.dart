@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:scaner_test_task/core/constants/assets.dart';
+import 'package:scaner_test_task/features/subscription/presentation/cubit/subscription_cubit.dart';
+import 'package:scaner_test_task/features/subscription/presentation/views/paywall_a_screen.dart';
 
 import '../../data/models/document.dart';
 import '../cubit/documents_cubit.dart';
@@ -85,7 +87,39 @@ class _DocumentInfoScreenState extends State<DocumentInfoScreen> {
                   const SizedBox(width: 8.0),
                   _buildActionButton(
                     AppImageAssets.print.asset,
-                    () => cubit.printDocument(doc),
+                    () {
+                      final subscriptionCubit =
+                          context.read<SubscriptionCubit>();
+                      final isPremium =
+                          subscriptionCubit.state is SubscriptionLoaded &&
+                              (subscriptionCubit.state as SubscriptionLoaded)
+                                  .isPremium;
+
+                      if (!isPremium) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => BlocProvider.value(
+                              value: subscriptionCubit,
+                              child: PaywallScreen(),
+                            ),
+                          ),
+                        );
+                        if (subscriptionCubit.state is SubscriptionLoaded) {
+                          cubit.printDocument(doc);
+                        }
+                        return;
+                      }
+                      cubit.printDocument(doc);
+
+                      // final isPremium = subscriptionCubit.isPremiumUser();
+
+                      // if (!isPremium) {
+                      //   Navigator.pushNamed(context, Routes.paywallA.name);
+                      //   return;
+                      // }
+                      // cubit.printDocument(doc);
+                    },
                   ),
                   const SizedBox(width: 8.0),
                   _buildActionButton(AppImageAssets.delete.asset, () async {

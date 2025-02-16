@@ -9,7 +9,6 @@ import 'package:scaner_test_task/features/documents/presentation/views/documents
 import 'package:scaner_test_task/features/onboarding/data/onboarding_repository.dart';
 import 'package:scaner_test_task/features/onboarding/presentation/views/onboarding_screen.dart';
 import 'package:scaner_test_task/features/splash/presentation/views/splash_screen.dart';
-import 'package:scaner_test_task/features/subscription/data/mock_subscription_service_impl.dart';
 import 'package:scaner_test_task/features/subscription/data/subscription_service.dart';
 import 'package:scaner_test_task/features/subscription/presentation/cubit/subscription_cubit.dart';
 import 'package:scaner_test_task/features/subscription/presentation/views/paywall_a_screen.dart';
@@ -40,8 +39,8 @@ void main() async {
   final prefs = await SharedPreferences.getInstance();
 
   //subscription initialization
-  final subscriptionService = MockSubscriptionService();
-  await subscriptionService.initialize();
+  // final subscriptionService = MockSubscriptionService();
+  // await subscriptionService.init();
 
   //scanbot sdk initialization
   final licenseKey = "bORqy5cafPI7fknl/ShLtRFyu7v+bm" +
@@ -70,7 +69,7 @@ void main() async {
           create: (context) => OnboardingRepository(prefs),
         ),
         RepositoryProvider<SubscriptionService>(
-          create: (_) => subscriptionService,
+          create: (_) => StoreKitSubscriptionService()..init(),
         ),
         RepositoryProvider(
           create: (_) => DocumentLocalDataSource(box),
