@@ -39,9 +39,10 @@ class DocumentRepository {
   }
 
   String _generateDocumentName(DocumentSource source, String? originalName) {
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
     return switch (source) {
-      DocumentSource.scan => "Scan document",
-      DocumentSource.gallery => "Gallery document",
+      DocumentSource.scan => "Scan_document_$timestamp",
+      DocumentSource.gallery => "Gallery_document_$timestamp",
       DocumentSource.files => originalName != null && originalName.isNotEmpty
           ? originalName
           : 'Imported document',
