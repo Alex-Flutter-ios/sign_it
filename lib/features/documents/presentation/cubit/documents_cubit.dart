@@ -5,7 +5,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:printing/printing.dart';
 import 'package:scanbot_sdk/scanbot_sdk.dart';
 import 'package:share_plus/share_plus.dart';
@@ -188,19 +187,6 @@ class DocumentsCubit extends Cubit<DocumentsState> {
     }
   }
 
-  // Future<File> _convertFile(File file) async {
-  //   try {
-  //     await _validateFile(file);
-  //     final dio = _createDio();
-  //     final pdfUrl = await _uploadFileAndGetPdfUrl(dio, file);
-  //     final pdfFile = await _downloadPdf(dio, pdfUrl);
-  //     return pdfFile;
-  //   } catch (e) {
-  //     debugPrint('Conversion Error: ${e.toString()}');
-  //     throw Exception('Failed to convert file: ${e.toString()}');
-  //   }
-  // }
-
   Future<void> _validateFile(File file) async {
     if (!await file.exists()) {
       throw Exception('Source file does not exist');
@@ -208,64 +194,6 @@ class DocumentsCubit extends Cubit<DocumentsState> {
     if (await file.length() == 0) {
       throw Exception('Source file is empty');
     }
-  }
-
-  Dio _createDio() {
-    return Dio(BaseOptions(
-      connectTimeout: const Duration(seconds: 15),
-      receiveTimeout: const Duration(seconds: 15),
-    ));
-  }
-
-  Future<String> _uploadFileAndGetPdfUrl(Dio dio, File file) async {
-    final formData = FormData.fromMap({
-      'kit': await MultipartFile.fromFile(
-        file.path,
-        filename: 'document.${file.path.split('.').last}',
-      ),
-    });
-
-    final response = await dio.post<String>(
-      'https://pdfconverterkit.click/converter_kit',
-      data: formData,
-      options: Options(
-        responseType: ResponseType.plain,
-        validateStatus: (status) => status == 200,
-      ),
-    );
-
-    if (response.statusCode != 200) {
-      throw Exception('Server responded with error: ${response.statusCode}');
-    }
-
-    final pdfUrl = response.data?.replaceAll('"', '');
-    if (pdfUrl == null || !pdfUrl.startsWith('http')) {
-      throw Exception('Invalid URL received: $pdfUrl');
-    }
-
-    return pdfUrl;
-  }
-
-  Future<File> _downloadPdf(Dio dio, String pdfUrl) async {
-    final pdfResponse = await dio.get<List<int>>(
-      pdfUrl,
-      options: Options(
-        responseType: ResponseType.bytes,
-        validateStatus: (status) => status == 200,
-      ),
-    );
-
-    final bytes = pdfResponse.data;
-    if (bytes == null || bytes.isEmpty) {
-      throw Exception('Failed to download PDF file');
-    }
-
-    final tempDir = await getTemporaryDirectory();
-    final outputFile =
-        File('${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.pdf');
-    await outputFile.writeAsBytes(bytes);
-
-    return outputFile;
   }
 
   Future<void> shareDocument(Document doc) async {
