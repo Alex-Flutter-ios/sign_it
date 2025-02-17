@@ -34,6 +34,18 @@ class DocumentRepository {
     return localDataSource.saveDocument(document);
   }
 
+  Future<File> convertFileToPdf(File file) async {
+    try {
+      // Используем RemoteDataSource для конвертации
+      final pdfUrl = await remoteDataSource.convertFileToPdf(file);
+      final pdfFile = await remoteDataSource.downloadPdfFile(pdfUrl);
+
+      return pdfFile;
+    } catch (e) {
+      throw Exception('Network error: $e');
+    }
+  }
+
   Future<void> deleteDocument(String documentId) async {
     await localDataSource.deleteDocument(documentId);
   }

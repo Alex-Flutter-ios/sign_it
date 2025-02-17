@@ -181,15 +181,25 @@ class DocumentsCubit extends Cubit<DocumentsState> {
   Future<File> _convertFile(File file) async {
     try {
       await _validateFile(file);
-      final dio = _createDio();
-      final pdfUrl = await _uploadFileAndGetPdfUrl(dio, file);
-      final pdfFile = await _downloadPdf(dio, pdfUrl);
+      final pdfFile = await repository.convertFileToPdf(file);
       return pdfFile;
-    } catch (e) {
-      debugPrint('Conversion Error: ${e.toString()}');
-      throw Exception('Failed to convert file: ${e.toString()}');
+    } on DioException catch (e) {
+      throw Exception('Network error: ${e.message}');
     }
   }
+
+  // Future<File> _convertFile(File file) async {
+  //   try {
+  //     await _validateFile(file);
+  //     final dio = _createDio();
+  //     final pdfUrl = await _uploadFileAndGetPdfUrl(dio, file);
+  //     final pdfFile = await _downloadPdf(dio, pdfUrl);
+  //     return pdfFile;
+  //   } catch (e) {
+  //     debugPrint('Conversion Error: ${e.toString()}');
+  //     throw Exception('Failed to convert file: ${e.toString()}');
+  //   }
+  // }
 
   Future<void> _validateFile(File file) async {
     if (!await file.exists()) {
